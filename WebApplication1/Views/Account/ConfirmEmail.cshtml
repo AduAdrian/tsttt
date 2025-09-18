@@ -1,0 +1,67 @@
+@{
+    ViewData["Title"] = "Confirmare Email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-header">
+    <div class="company-name">
+        Miseda Inspect SRL
+    </div>
+    <div class="subtitle">
+        Confirmare Email
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card @(ViewBag.Message != null ? "border-success" : "border-danger")">
+                <div class="card-body text-center">
+                    <div style="font-size: 4rem; margin-bottom: 20px; color: @(ViewBag.Message != null ? "#28a745" : "#dc3545");">
+                        @(ViewBag.Message != null ? "?" : "?")
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.Message))
+                    {
+                        <h4 class="card-title text-success mb-4">Email Confirmat!</h4>
+                        <div class="alert alert-success" role="alert">
+                            @ViewBag.Message
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(ViewBag.Username))
+                        {
+                            <p class="mb-4">
+                                Acum te poti conecta cu username-ul: <strong>@ViewBag.Username</strong>
+                            </p>
+                        }
+                        
+                        <div class="d-grid">
+                            <a href="/Account/Login" class="btn btn-success">
+                                Conecteaza-te Acum
+                            </a>
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.Error))
+                    {
+                        <h4 class="card-title text-danger mb-4">Eroare Confirmare</h4>
+                        <div class="alert alert-danger" role="alert">
+                            @ViewBag.Error
+                        </div>
+                        
+                        <p class="text-muted mb-4">
+                            Link-ul de confirmare poate fi expirat sau invalid. 
+                            Contacteaza administratorul pentru asistenta.
+                        </p>
+                        
+                        <div class="d-grid">
+                            <a href="/Account/Login" class="btn btn-primary">
+                                Inapoi la Login
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

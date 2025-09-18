@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Confirmare Inregistrare";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-header">
+    <div class="company-name">
+        Miseda Inspect SRL
+    </div>
+    <div class="subtitle">
+        Cont Creat
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <div style="font-size: 4rem; color: #28a745; margin-bottom: 20px;">
+                        ??
+                    </div>
+                    
+                    <h4 class="card-title text-success mb-4">
+                        @if (!string.IsNullOrEmpty(ViewBag.Username))
+                        {
+                            <text>Cont '@ViewBag.Username' creat cu succes!</text>
+                        }
+                        else
+                        {
+                            <text>Cont creat cu succes!</text>
+                        }
+                    </h4>
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.Message))
+                    {
+                        <div class="alert alert-info" role="alert">
+                            @ViewBag.Message
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.Error))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @ViewBag.Error
+                        </div>
+                    }
+                    
+                    <div class="mb-4">
+                        @if (!string.IsNullOrEmpty(ViewBag.Username))
+                        {
+                            <p class="mb-3">
+                                <strong>Username:</strong> @ViewBag.Username<br>
+                                @if (!string.IsNullOrEmpty(ViewBag.Email))
+                                {
+                                    <strong>Email:</strong> @ViewBag.Email
+                                }
+                            </p>
+                        }
+                        
+                        <p class="mb-3">
+                            <strong>Pasul urmator:</strong> Verifica emailul pentru a confirma contul.
+                        </p>
+                        
+                        <p class="text-muted mb-3">
+                            Nu te poti conecta la cont pana nu confirmi emailul prin linkul trimis.
+                        </p>
+                        
+                        <p class="text-muted small">
+                            Daca nu gasesti emailul, verifica si folderul de spam.
+                        </p>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <a href="/Account/Login" class="btn btn-primary">
+                            Mergi la Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

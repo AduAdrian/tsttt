@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Introdu Codul SMS";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-header">
+    <div class="company-name">
+        Miseda Inspect SRL
+    </div>
+    <div class="subtitle">
+        Verificare Cod SMS
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Introdu codul primit prin SMS</h4>
+                    <p class="text-center text-muted mb-4">
+                        Am trimis un cod de verificare la numarul: <strong>@ViewBag.PhoneNumber</strong>
+                        @if (!string.IsNullOrEmpty(ViewBag.Username))
+                        {
+                            <br><small>Pentru contul: <strong>@ViewBag.Username</strong></small>
+                        }
+                    </p>
+                    
+                    <form method="post" action="/Account/VerifySmsCode">
+                        <input type="hidden" name="phoneNumber" value="@ViewBag.PhoneNumber" />
+                        
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                        
+                        <div class="mb-3">
+                            <label for="smsCode" class="form-label">Codul din SMS</label>
+                            <input type="text" class="form-control text-center" id="smsCode" name="smsCode" 
+                                   placeholder="123456" maxlength="6" required style="font-size: 1.5rem; letter-spacing: 0.5rem;">
+                            <div class="form-text">Codul are 6 cifre si expira in 10 minute.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Parola Noua</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirma Parola Noua</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Reseteaza Parola</button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <form method="post" action="/Account/ForgotPasswordSms" style="display: inline;">
+                            <input type="hidden" name="phoneNumber" value="@ViewBag.PhoneNumber" />
+                            <button type="submit" class="btn btn-link text-decoration-none">Retrimite codul</button>
+                        </form>
+                    </div>
+                    
+                    <div class="text-center mt-2">
+                        <a href="/Account/Login" class="text-decoration-none">Inapoi la conectare</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

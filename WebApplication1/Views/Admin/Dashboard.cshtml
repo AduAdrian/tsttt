@@ -1,0 +1,197 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Control Panel - Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">
+            <i class="fas fa-tachometer-alt"></i> Dashboard Control Panel
+        </h1>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Utilizatori
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalUsers</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Utilizatori Confirmati
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ConfirmedUsers</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Utilizatori Neconfirmati
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.UnconfirmedUsers</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Rata Confirmare
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                    @(Model.TotalUsers > 0 ? Math.Round((double)Model.ConfirmedUsers / Model.TotalUsers * 100, 1) : 0)%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Users -->
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-user-plus"></i> Utilizatori Recenti
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.RecentUsers.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Telefon</th>
+                                    <th>Status Email</th>
+                                    <th>Data Crearii</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model.RecentUsers)
+                                {
+                                    <tr>
+                                        <td>@user.UserName</td>
+                                        <td>@user.Email</td>
+                                        <td>@user.PhoneNumber</td>
+                                        <td>
+                                            @if (user.EmailConfirmed)
+                                            {
+                                                <span class="badge badge-success">Confirmat</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-warning">Neconfirmat</span>
+                                            }
+                                        </td>
+                                        <td>@user.Id</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Nu exista utilizatori inregistrati.</p>
+                }
+                
+                <div class="text-center">
+                    <a href="/Admin/Users" class="btn btn-primary">
+                        <i class="fas fa-users"></i> Vezi Toti Utilizatorii
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-bolt"></i> Actiuni Rapide
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="/Admin/Users" class="btn btn-outline-primary btn-block">
+                            <i class="fas fa-users"></i><br>
+                            Gestioneaza Utilizatori
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/Admin/SystemInfo" class="btn btn-outline-info btn-block">
+                            <i class="fas fa-info-circle"></i><br>
+                            Informatii Sistem
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/Test/TestEmail" class="btn btn-outline-success btn-block">
+                            <i class="fas fa-envelope"></i><br>
+                            Test Email
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/Test/TestSms" class="btn btn-outline-warning btn-block">
+                            <i class="fas fa-sms"></i><br>
+                            Test SMS
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

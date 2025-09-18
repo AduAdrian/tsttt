@@ -1,0 +1,69 @@
+@{
+    ViewData["Title"] = "Creare Cont";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-header">
+    <div class="company-name">
+        Miseda Inspect SRL
+    </div>
+    <div class="subtitle">
+        Creare Cont Nou
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Creaza Cont</h4>
+                    
+                    <form method="post" action="/Account/Register">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Numele tau de utilizator" required>
+                            <div class="form-text">Username-ul cu care te vei conecta.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                            <div class="form-text">Pentru recuperarea parolei prin email.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Numar de Telefon</label>
+                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" 
+                                   placeholder="Ex: 0712345678" required>
+                            <div class="form-text">Pentru recuperarea parolei prin SMS.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Parola</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="form-text">Parola trebuie sa aiba cel putin 6 caractere si sa contina cel putin o cifra.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirma Parola</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Creaza Cont</button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <span>Ai deja cont? </span>
+                        <a href="/Account/Login" class="text-decoration-none">Conecteaza-te</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

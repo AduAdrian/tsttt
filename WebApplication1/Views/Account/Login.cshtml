@@ -1,0 +1,141 @@
+@{
+    ViewData["Title"] = "Autentificare";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-header">
+    <div class="company-name">
+        Miseda Inspect SRL
+    </div>
+    <div class="subtitle">
+        Autentificare
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Conectare</h4>
+                    
+                    <form method="post" action="/Account/Login" autocomplete="off">
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                        
+                        <!-- Enhanced error display -->
+                        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(""))
+                        {
+                            var errors = ViewData.ModelState[""]?.Errors;
+                            if (errors != null && errors.Count > 0)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong><i class="fas fa-exclamation-triangle"></i> Eroare:</strong> @errors.First().ErrorMessage
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(ViewBag.Message))
+                        {
+                            <div class="alert alert-success" role="alert">
+                                @ViewBag.Message
+                            </div>
+                        }
+                        
+                        <div class="mb-3">
+                            <label for="loginIdentifier" class="form-label">Username / Email / Numar Telefon</label>
+                            <input type="text" class="form-control" id="loginIdentifier" name="loginIdentifier" 
+                                   placeholder="Numele de utilizator, email sau 0712345678" 
+                                   autocomplete="off" required>
+                            <div class="form-text">Poti folosi username-ul, emailul sau numarul de telefon pentru a te conecta.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Parola</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       autocomplete="new-password" required>
+                                <button type="button" class="btn btn-outline-secondary" id="togglePassword" onclick="togglePasswordVisibility()">
+                                    <i id="passwordIcon" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Tine-ma minte
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Conectare</button>
+                        </div>
+                    </form>
+                    
+                    @if (ViewBag.ShowResendLink == true)
+                    {
+                        <div class="alert alert-warning mt-3" role="alert">
+                            <strong>Email neconfirmat pentru '@ViewBag.Username'!</strong><br>
+                            Nu ai primit emailul de confirmare la @ViewBag.Email?
+                            
+                            <form method="post" action="/Account/ResendEmailConfirmation" style="display: inline;" class="mt-2">
+                                <input type="hidden" name="email" value="@ViewBag.Email" />
+                                <input type="hidden" name="username" value="@ViewBag.Username" />
+                                <div class="d-grid mt-2">
+                                    <button type="submit" class="btn btn-warning btn-sm">Retrimite emailul de confirmare</button>
+                                </div>
+                            </form>
+                        </div>
+                    }
+                    
+                    <div class="text-center mt-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="/Account/ForgotPassword" class="text-decoration-none btn btn-link btn-sm">
+                                    Recuperare prin Email
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="/Account/ForgotPasswordSms" class="text-decoration-none btn btn-link btn-sm">
+                                    Recuperare prin SMS
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-2">
+                        <span>Nu ai cont? </span>
+                        <a href="/Account/Register" class="text-decoration-none">Creaza cont</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.className = 'fas fa-eye';
+            }
+        }
+        
+        // Clear form on page load to prevent autocomplete
+        window.onload = function() {
+            document.getElementById('loginIdentifier').value = '';
+            document.getElementById('password').value = '';
+        }
+    </script>
+}

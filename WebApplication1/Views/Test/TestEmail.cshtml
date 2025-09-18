@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Test Email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-header">
+    <div class="company-name">
+        Miseda Inspect SRL
+    </div>
+    <div class="subtitle">
+        Test Email
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Test Serviciu Email</h4>
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.Message))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            <strong>Succes!</strong> @ViewBag.Message
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.Error))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <strong>Eroare!</strong> @ViewBag.Error
+                        </div>
+                    }
+                    
+                    <form method="post" action="/Test/TestEmail">
+                        <div class="mb-3">
+                            <label for="testEmail" class="form-label">Email pentru test</label>
+                            <input type="email" class="form-control" id="testEmail" name="testEmail" 
+                                   placeholder="Introdu emailul tau pentru a testa serviciul" required>
+                            <div class="form-text">Va fi trimis un email de test la aceasta adresa.</div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Trimite Email de Test</button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="text-muted">
+                            Aceasta pagina este pentru testarea serviciului de email cu serverul:
+                            <br><strong>mail.misedainspectsrl.ro</strong>
+                        </p>
+                        <a href="/Home" class="btn btn-secondary">Inapoi la Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
