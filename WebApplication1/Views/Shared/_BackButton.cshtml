@@ -7,7 +7,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3 back-button-header">
     <!-- Back Button -->
-    <button type="button" class="btn btn-outline-secondary back-btn" onclick="smartGoBack('@backUrl')">
+    <button type="button" class="btn btn-outline-secondary back-btn" onclick="smartGoBack('@Html.Raw(backUrl)')">
         <i class="fas fa-arrow-left"></i> @backText
     </button>
     
@@ -114,7 +114,7 @@
                 item.setAttribute('aria-current', 'page');
                 item.textContent = displayName;
             } else {
-                item.innerHTML = `<a href="${currentPath}">${displayName}</a>`;
+                item.innerHTML = '<a href="' + currentPath + '">' + displayName + '</a>';
             }
             
             breadcrumb.appendChild(item);
@@ -144,10 +144,10 @@
             const prevSegment = segments[index - 1];
             if (prevSegment === 'clients') {
                 // Try to get registration number from page context
-                const regNumber = document.querySelector('.badge:contains("@")')?.textContent;
-                return regNumber || `Client #${segment}`;
+                const regNumber = document.querySelector('.badge')?.textContent;
+                return regNumber || 'Client #' + segment;
             }
-            return `#${segment}`;
+            return '#' + segment;
         }
         
         return names[segment.toLowerCase()] || 

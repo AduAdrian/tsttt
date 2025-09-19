@@ -254,7 +254,7 @@ namespace WebApplication1.Services
 
             // Protejeaz? sheet-ul cu parol?
             ws.Protection.IsProtected = true;
-            ws.Protection.Password = "miseda2024";
+            ws.Protection.SetPassword("miseda2024");
             ws.Protection.AllowSelectLockedCells = true;
             ws.Protection.AllowSelectUnlockedCells = true;
             ws.Protection.AllowFormatCells = false;
@@ -442,7 +442,7 @@ namespace WebApplication1.Services
                 new { Reg = "CJ99DEF", Phone = "0756596565", Type = "2 Ani", Note = "ITP Bianual auto nou?" },
                 new { Reg = "SV88GHI", Phone = "0756596565", Type = "Manual", Note = "Dat? personalizat? - 15.03.2025" },
                 new { Reg = "AB77JKL", Phone = "0756596565", Type = "6 Luni", Note = "ITP Semestrial" },
-                new { Reg = "HD55MNO", Phone = "0756596565", Type = "Manual", Note = "Expir? în 15 zile - notificare urgent?" },
+                new { Reg = "HD55MNO", Phone = "0756596565", Type = "Manual", Note = "Expir? în 15 zile - notificare urgenta?" },
                 new { Reg = "TM44PQR", Phone = "0756596565", Type = "1 An", Note = "Client fidel - ITP anual" },
                 new { Reg = "IS33STU", Phone = "0756596565", Type = "Manual", Note = "EXPIRAT - necesit? reînnoire" },
                 new { Reg = "BV22VWX", Phone = "0756596565", Type = "Manual", Note = "Expir? curând - 20 zile" },
@@ -717,13 +717,13 @@ namespace WebApplication1.Services
                         ValidityType validityType;
                         switch (validityTypeText?.ToLower())
                         {
-                            case "6 luni":
+                            case "6luni":
                                 validityType = ValidityType.SixMonths;
                                 break;
-                            case "1 an":
+                            case "1an":
                                 validityType = ValidityType.OneYear;
                                 break;
-                            case "2 ani":
+                            case "2ani":
                                 validityType = ValidityType.TwoYears;
                                 break;
                             case "manual":

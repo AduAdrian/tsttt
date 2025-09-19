@@ -102,7 +102,12 @@ namespace WebApplication1.Services
                 _logger.LogInformation("Attempting to send SMS to: {PhoneNumber}", formattedPhone);
 
                 var client = new RestClient(smsApiUrl);
-                client.Timeout = TimeSpan.FromSeconds(30);
+                // In newer RestSharp versions, timeout is set in options
+                var options = new RestClientOptions(smsApiUrl)
+                {
+                    Timeout = TimeSpan.FromSeconds(30)
+                };
+                client = new RestClient(options);
                 
                 var request = new RestRequest("", Method.Post);
                 request.AddHeader("Authorization", $"Bearer {apiToken}");
