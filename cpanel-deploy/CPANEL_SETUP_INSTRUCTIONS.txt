@@ -1,0 +1,16 @@
+﻿# Configurare cPanel pentru NotificariClienti
+# Aceste instrucÈ›iuni trebuie urmate Ã®n cPanel
+
+1. Upload fiÈ™ierele din cpanel-deploy/public_html Ã®n directorul public_html al domeniului
+2. Upload fiÈ™ierele din cpanel-deploy/app_data Ã®n afara directorului public_html
+3. ConfigureazÄƒ variabilele de mediu Ã®n cPanel:
+   - ASPNETCORE_ENVIRONMENT = Production
+   - ConnectionStrings__DefaultConnection = Data Source=/path/to/app.db
+
+4. AsigurÄƒ-te cÄƒ .NET 8.0 runtime este instalat pe server
+5. ConfigureazÄƒ aplicaÈ›ia sÄƒ ruleze ca ASP.NET Core app Ã®n cPanel
+
+Paths importante:
+- public_html/: toate fiÈ™ierele aplicaÈ›iei web
+- app_data/: baza de date SQLite
+- logs/: pentru log-urile aplicaÈ›iei (creeazÄƒ manual Ã®n cPanel)
