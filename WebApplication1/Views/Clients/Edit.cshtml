@@ -1,0 +1,300 @@
+@model WebApplication1.Models.ClientEditViewModel
+
+@{
+    ViewData["Title"] = "Editeaz? Client";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- Enhanced Back Button Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Înapoi la Clien?i
+            </a>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Acas?</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Clients")">Clien?i</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Details", "Clients", new { id = Model.Id })">@Model.RegistrationNumber</a></li>
+                    <li class="breadcrumb-item active">Editeaz?</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-edit"></i> Editeaz? Client: <span class="badge bg-primary">@Model.RegistrationNumber</span>
+                </h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" id="clientForm">
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="RegistrationNumber" class="form-label">
+                            <i class="fas fa-car"></i> @Html.DisplayNameFor(model => model.RegistrationNumber)
+                        </label>
+                        <input asp-for="RegistrationNumber" class="form-control" placeholder="Ex: B123ABC" maxlength="15" style="text-transform: uppercase;" />
+                        <div class="form-text">Num?rul va fi convertit automat în majuscule</div>
+                        <span asp-validation-for="RegistrationNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ValidityType" class="form-label">
+                            <i class="fas fa-calendar-alt"></i> @Html.DisplayNameFor(model => model.ValidityType)
+                        </label>
+                        <select asp-for="ValidityType" class="form-select" id="validityTypeSelect" onchange="handleValidityTypeChange()">
+                            <option value="0" selected="@(Model.ValidityType == ValidityType.Manual ? "selected" : null)">Manual</option>
+                            <option value="6" selected="@(Model.ValidityType == ValidityType.SixMonths ? "selected" : null)">6 Luni</option>
+                            <option value="12" selected="@(Model.ValidityType == ValidityType.OneYear ? "selected" : null)">1 An</option>
+                            <option value="24" selected="@(Model.ValidityType == ValidityType.TwoYears ? "selected" : null)">2 Ani</option>
+                        </select>
+                        <span asp-validation-for="ValidityType" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ExpiryDate" class="form-label">
+                            <i class="fas fa-calendar-check"></i> @Html.DisplayNameFor(model => model.ExpiryDate)
+                            <span id="calendarIcon" class="text-primary">
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
+                            <span id="lockIcon" class="text-warning" style="display: none;">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                        </label>
+                        <input asp-for="ExpiryDate" class="form-control" type="date" id="expiryDateInput" />
+                        <div id="expiryDateHelp" class="form-text">Seteaz? manual data de expirare ITP</div>
+                        <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">
+                            <i class="fas fa-phone"></i> @Html.DisplayNameFor(model => model.PhoneNumber)
+                        </label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="Ex: 0756596565" />
+                        <div class="form-text">Obligatoriu pentru notific?rile SMS</div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                            <label asp-for="IsActive" class="form-check-label">
+                                <i class="fas fa-toggle-on"></i> @Html.DisplayNameFor(model => model.IsActive)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Calculator Info -->
+                    <div id="calculatorInfo"></div>
+
+                    <div class="d-flex justify-content-between">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary" onclick="goBack()">
+                                <i class="fas fa-arrow-left"></i> Înapoi
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info">
+                                <i class="fas fa-eye"></i> Vezi Detalii
+                            </a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Salveaz? Modific?rile
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Enhanced back button functionality
+        function goBack() {
+            // Check if there's history to go back to
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Fallback to clients index
+                window.location.href = '@Url.Action("Index", "Clients")';
+            }
+        }
+
+        // Keyboard shortcut for back button
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey && e.key === 'ArrowLeft') {
+                e.preventDefault();
+                goBack();
+            }
+            // Quick save shortcut
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                document.getElementById('clientForm').submit();
+            }
+        });
+
+        // Initialize client form functionality when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeClientForm();
+        });
+        
+        // Function to handle client form specific functionality
+        function initializeClientForm() {
+            const validityTypeSelect = document.getElementById('validityTypeSelect');
+            if (validityTypeSelect) {
+                // Set initial state based on current selection
+                handleValidityTypeChange();
+            }
+        }
+
+        // Global functions for client forms
+        function handleValidityTypeChange() {
+            const validityType = document.getElementById('validityTypeSelect')?.value;
+            const expiryInput = document.getElementById('expiryDateInput');
+            const expiryDateHelp = document.getElementById('expiryDateHelp');
+            const calendarIcon = document.getElementById('calendarIcon');
+            const lockIcon = document.getElementById('lockIcon');
+            
+            if (!validityType || !expiryInput) {
+                return; // Elements not found, skip
+            }
+            
+            if (validityType === '0') { // Manual
+                // Enable manual input
+                expiryInput.readOnly = false;
+                expiryInput.style.backgroundColor = '';
+                if (expiryDateHelp) expiryDateHelp.textContent = 'Seteaz? manual data de expirare ITP';
+                
+                // Show calendar icon, hide lock icon
+                if (calendarIcon) calendarIcon.style.display = 'inline';
+                if (lockIcon) lockIcon.style.display = 'none';
+                
+                // Clear calculator info for manual mode
+                const calculatorInfo = document.getElementById('calculatorInfo');
+                if (calculatorInfo) {
+                    calculatorInfo.innerHTML = `
+                        <div class="alert alert-info">
+                            <strong>Mod Manual:</strong><br>
+                            Po?i modifica manual data de expirare ITP.
+                        </div>
+                    `;
+                }
+                
+                // Add event listener to date input to update calculator info when user selects a date
+                expiryInput.addEventListener('change', updateManualCalculatorInfo);
+                
+            } else {
+                // Disable input and calculate automatically
+                expiryInput.readOnly = true;
+                expiryInput.style.backgroundColor = '#e9ecef';
+                if (expiryDateHelp) expiryDateHelp.textContent = 'Se calculeaz? automat pe baza tipului de valabilitate';
+                
+                // Show lock icon, hide calendar icon
+                if (calendarIcon) calendarIcon.style.display = 'none';
+                if (lockIcon) lockIcon.style.display = 'inline';
+                
+                // Remove event listener if it exists
+                expiryInput.removeEventListener('change', updateManualCalculatorInfo);
+                
+                // Calculate automatic date
+                calculateExpiryDate();
+            }
+        }
+
+        function updateManualCalculatorInfo() {
+            const expiryInput = document.getElementById('expiryDateInput');
+            const calculatorInfo = document.getElementById('calculatorInfo');
+            
+            if (expiryInput && calculatorInfo && expiryInput.value) {
+                const selectedDate = new Date(expiryInput.value);
+                const today = new Date();
+                
+                const formattedDate = selectedDate.toLocaleDateString('ro-RO', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Calculate days from today
+                const daysDiff = Math.ceil((selectedDate - today) / (1000 * 60 * 60 * 24));
+                const daysText = daysDiff > 0 ? `(peste ${daysDiff} zile)` : 
+                                daysDiff < 0 ? `(a trecut cu ${Math.abs(daysDiff)} zile în urm?)` : 
+                                '(azi)';
+                
+                calculatorInfo.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>Mod Manual:</strong><br>
+                        <strong>Data expirare ITP: ${formattedDate}</strong>
+                        <br><small>Fa?? de ast?zi: ${daysText}</small>
+                    </div>
+                `;
+            }
+        }
+
+        function calculateExpiryDate() {
+            const validityTypeSelect = document.getElementById('validityTypeSelect');
+            const expiryInput = document.getElementById('expiryDateInput');
+            const calculatorInfo = document.getElementById('calculatorInfo');
+            
+            if (!validityTypeSelect || !expiryInput) {
+                return; // Elements not found, skip
+            }
+            
+            const validityType = validityTypeSelect.value;
+            
+            // Skip calculation for manual mode
+            if (validityType === '0') {
+                return;
+            }
+            
+            if (validityType) {
+                const today = new Date();
+                const months = parseInt(validityType);
+                
+                // Add months to today's date
+                const expiryDate = new Date(today);
+                expiryDate.setMonth(expiryDate.getMonth() + months);
+                
+                // Set calculated date to input
+                expiryInput.value = expiryDate.toISOString().split('T')[0];
+                
+                // Format date for display
+                const displayDate = expiryDate.toLocaleDateString('ro-RO', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Update calculator info if present
+                if (calculatorInfo) {
+                    const validityName = getValidityTypeName(validityType);
+                    const daysDiff = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    calculatorInfo.innerHTML = `
+                        <div class="alert alert-info">
+                            <strong>Calcul Automat:</strong><br>
+                            Tip valabilitate: ${validityName}<br>
+                            Perioada: ${months} luni (${daysDiff} zile)<br>
+                            <strong>Data expirare ITP: ${displayDate}</strong>
+                            <br><small class="text-info"><i class="fas fa-lock"></i> Data este blocat? pentru calcul automat</small>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function getValidityTypeName(value) {
+            switch(value) {
+                case '6': return '6 luni';
+                case '12': return '1 an';
+                case '24': return '2 ani';
+                default: return 'Necunoscut';
+            }
+        }
+    </script>
+}

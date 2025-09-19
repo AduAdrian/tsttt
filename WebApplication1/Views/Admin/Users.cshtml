@@ -1,0 +1,176 @@
+@using WebApplication1.Models
+@model List<UserViewModel>
+@{
+    ViewData["Title"] = "Gestionare Utilizatori";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">
+            <i class="fas fa-users"></i> Gestionare Utilizatori
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    Lista Utilizatori (@Model.Count)
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Telefon</th>
+                                    <th>Status Email</th>
+                                    <th>Roluri</th>
+                                    <th>Actiuni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var userModel in Model)
+                                {
+                                    <tr id="user-@userModel.User.Id">
+                                        <td>
+                                            <strong>@userModel.User.UserName</strong>
+                                            @if (userModel.Roles.Contains("Admin"))
+                                            {
+                                                <span class="badge bg-danger ms-1">ADMIN</span>
+                                            }
+                                        </td>
+                                        <td>@userModel.User.Email</td>
+                                        <td>@userModel.User.PhoneNumber</td>
+                                        <td>
+                                            @if (userModel.User.EmailConfirmed)
+                                            {
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check"></i> Confirmat
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning">
+                                                    <i class="fas fa-exclamation-triangle"></i> Neconfirmat
+                                                </span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (userModel.Roles.Any())
+                                            {
+                                                @foreach (var role in userModel.Roles)
+                                                {
+                                                    <span class="badge bg-info me-1">@role</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Fara rol</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                @if (!userModel.User.EmailConfirmed)
+                                                {
+                                                    <button type="button" class="btn btn-sm btn-success" 
+                                                            onclick="confirmEmail('@userModel.User.Id')" 
+                                                            title="Confirma Email">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                }
+                                                
+                                                @if (!userModel.Roles.Contains("Admin"))
+                                                {
+                                                    <button type="button" class="btn btn-sm btn-danger" 
+                                                            onclick="deleteUser('@userModel.User.Id', '@userModel.User.UserName')" 
+                                                            title="Sterge Utilizator">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <span class="btn btn-sm btn-secondary disabled">
+                                                        <i class="fas fa-shield-alt"></i>
+                                                    </span>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Nu exista utilizatori inregistrati.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmEmail(userId) {
+            if (confirm('Esti sigur ca vrei sa confirmi emailul acestui utilizator?')) {
+                fetch('/Admin/ConfirmUserEmail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'userId=' + encodeURIComponent(userId)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Email confirmat cu succes!');
+                        location.reload();
+                    } else {
+                        alert('Eroare: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Eroare la confirmarea emailului');
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        function deleteUser(userId, username) {
+            if (confirm(`Esti sigur ca vrei sa stergi utilizatorul "${username}"? Aceasta actiune nu poate fi anulata!`)) {
+                fetch('/Admin/DeleteUser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'userId=' + encodeURIComponent(userId)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Utilizator sters cu succes!');
+                        document.getElementById('user-' + userId).remove();
+                    } else {
+                        alert('Eroare: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Eroare la stergerea utilizatorului');
+                    console.error('Error:', error);
+                });
+            }
+        }
+    </script>
+}

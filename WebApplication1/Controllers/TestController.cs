@@ -83,5 +83,17 @@ namespace WebApplication1.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public IActionResult NavigationTest()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return RedirectToAction("NavigationTest");
+        }
     }
 }

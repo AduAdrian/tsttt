@@ -1,0 +1,308 @@
+@model AppointmentCalendarViewModel
+@{
+    ViewData["Title"] = "Calendar program?ri";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">@ViewData["Title"]</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-list"></i> Vedere list?
+            </a>
+            <a asp-action="Create" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> Programare nou?
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Month Navigation -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <a asp-action="Calendar" asp-route-month="@Model.CurrentMonth.AddMonths(-1).ToString("yyyy-MM-dd")" 
+                   class="btn btn-outline-primary">
+                    <i class="fas fa-chevron-left"></i> Luna precedent?
+                </a>
+            </div>
+            <div class="col-md-4 text-center">
+                <h4>@Model.CurrentMonth.ToString("MMMM yyyy")</h4>
+            </div>
+            <div class="col-md-4 text-end">
+                <a asp-action="Calendar" asp-route-month="@Model.CurrentMonth.AddMonths(1).ToString("yyyy-MM-dd")" 
+                   class="btn btn-outline-primary">
+                    Luna urm?toare <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Calendar Grid -->
+<div class="card shadow">
+    <div class="card-header">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-calendar-alt"></i> Calendar program?ri - @Model.CurrentMonth.ToString("MMMM yyyy")
+        </h6>
+    </div>
+    <div class="card-body p-0">
+        <div class="calendar-container">
+            <div class="calendar-grid">
+                <!-- Calendar Header -->
+                <div class="calendar-header">
+                    <div class="calendar-day-header">Duminic?</div>
+                    <div class="calendar-day-header">Luni</div>
+                    <div class="calendar-day-header">Mar?i</div>
+                    <div class="calendar-day-header">Miercuri</div>
+                    <div class="calendar-day-header">Joi</div>
+                    <div class="calendar-day-header">Vineri</div>
+                    <div class="calendar-day-header">Sâmb?t?</div>
+                </div>
+
+                <!-- Calendar Days -->
+                <div class="calendar-body">
+                    @foreach (var day in Model.Days)
+                    {
+                        <div class="calendar-day @(day.IsCurrentMonth ? "current-month" : "other-month") @(day.IsToday ? "today" : "")">
+                            <div class="day-number">@day.Date.Day</div>
+                            @if (day.Appointments.Any())
+                            {
+                                <div class="appointments">
+                                    @foreach (var appointment in day.Appointments.Take(3))
+                                    {
+                                        <div class="appointment-item @GetAppointmentClass(appointment.Status)"
+                                             onclick="showAppointmentDetails(@appointment.Id)"
+                                             title="@appointment.Title - @appointment.ClientName (@appointment.AppointmentDate.ToString("HH:mm"))">
+                                            <small>
+                                                @appointment.AppointmentDate.ToString("HH:mm") - @appointment.Title
+                                            </small>
+                                        </div>
+                                    }
+                                    @if (day.Appointments.Count > 3)
+                                    {
+                                        <div class="more-appointments">
+                                            <small>+@(day.Appointments.Count - 3) mai multe</small>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <div class="day-actions">
+                                <button type="button" class="btn btn-sm btn-link p-0" 
+                                        onclick="createAppointment('@day.Date.ToString("yyyy-MM-dd")')"
+                                        title="Adaug? programare">
+                                    <i class="fas fa-plus text-primary"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment Details Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalii programare</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="appointmentModalBody">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Închide</button>
+                <button type="button" class="btn btn-primary" id="editAppointmentBtn">Editeaz?</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetAppointmentClass(AppointmentStatus status)
+    {
+        return status switch
+        {
+            AppointmentStatus.Scheduled => "appointment-scheduled",
+            AppointmentStatus.Confirmed => "appointment-confirmed",
+            AppointmentStatus.InProgress => "appointment-in-progress",
+            AppointmentStatus.Completed => "appointment-completed",
+            AppointmentStatus.Cancelled => "appointment-cancelled",
+            AppointmentStatus.Rescheduled => "appointment-rescheduled",
+            _ => "appointment-scheduled"
+        };
+    }
+}
+
+@section Styles {
+    <style>
+        .calendar-container {
+            background: white;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-header {
+            display: contents;
+        }
+
+        .calendar-day-header {
+            background: #f8f9fc;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 1px solid #e3e6f0;
+            border-right: 1px solid #e3e6f0;
+        }
+
+        .calendar-day-header:last-child {
+            border-right: none;
+        }
+
+        .calendar-body {
+            display: contents;
+        }
+
+        .calendar-day {
+            min-height: 120px;
+            padding: 8px;
+            border-bottom: 1px solid #e3e6f0;
+            border-right: 1px solid #e3e6f0;
+            position: relative;
+            background: white;
+        }
+
+        .calendar-day:last-child {
+            border-right: none;
+        }
+
+        .calendar-day.other-month {
+            background: #f8f9fc;
+            color: #858796;
+        }
+
+        .calendar-day.today {
+            background: #eef2ff;
+            border: 2px solid #4e73df;
+        }
+
+        .day-number {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .appointments {
+            margin-bottom: 20px;
+        }
+
+        .appointment-item {
+            background: #e3e6f0;
+            padding: 2px 5px;
+            margin-bottom: 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .appointment-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .appointment-scheduled {
+            background: #6c757d;
+            color: white;
+        }
+
+        .appointment-confirmed {
+            background: #4e73df;
+            color: white;
+        }
+
+        .appointment-in-progress {
+            background: #36b9cc;
+            color: white;
+        }
+
+        .appointment-completed {
+            background: #1cc88a;
+            color: white;
+        }
+
+        .appointment-cancelled {
+            background: #e74a3b;
+            color: white;
+        }
+
+        .appointment-rescheduled {
+            background: #f6c23e;
+            color: white;
+        }
+
+        .more-appointments {
+            background: #858796;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .day-actions {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+
+        .day-actions .btn {
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .calendar-day:hover .day-actions .btn {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .calendar-day {
+                min-height: 80px;
+                font-size: 12px;
+            }
+            
+            .calendar-day-header {
+                padding: 8px 5px;
+                font-size: 12px;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function showAppointmentDetails(appointmentId) {
+            // Load appointment details via AJAX
+            fetch(`/Appointments/Details/${appointmentId}`)
+                .then(response => response.text())
+                .then(html => {
+                    // Extract the appointment data from the response
+                    // For simplicity, redirect to details page
+                    window.location.href = `/Appointments/Details/${appointmentId}`;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function createAppointment(date) {
+            window.location.href = `/Appointments/Create?appointmentDate=${date}T09:00`;
+        }
+    </script>
+}

@@ -1,0 +1,90 @@
+@{
+    ViewData["Title"] = "Acces Interzis";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-header">
+    @await Html.PartialAsync("_SimpleNavigation")
+    
+    <div class="company-name">
+        Miseda Inspect SRL
+    </div>
+    <div class="subtitle">
+        Acces Interzis
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <div style="font-size: 4rem; color: #ffc107; margin-bottom: 20px;">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    
+                    <h4 class="card-title text-warning mb-4">
+                        Acces Interzis
+                    </h4>
+                    
+                    <div class="alert alert-warning" role="alert">
+                        <strong><i class="fas fa-exclamation-triangle"></i> Nu ai permisiunea s? accesezi aceast? pagin?.</strong>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="mb-3">
+                            Pentru a accesa aceast? func?ionalitate, ai nevoie de:
+                        </p>
+                        
+                        <ul class="list-unstyled text-start">
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Cont confirmat prin email</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Permisiuni de administrator</li>
+                            <li class="mb-2"><i class="fas fa-check text-success"></i> Autentificare valid?</li>
+                        </ul>
+                        
+                        <div class="mt-4">
+                            <p class="text-muted">
+                                Dac? crezi c? ai primit aceast? eroare din gre?eal?, contacteaz? administratorul.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-block">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Înapoi la Acas?
+                        </a>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-outline-secondary">
+                            <i class="fas fa-sign-in-alt"></i> Autentificare
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Log access denied attempt for security monitoring
+        console.warn('?? Access denied attempt:', {
+            path: window.location.pathname,
+            timestamp: new Date().toISOString(),
+            referrer: document.referrer
+        });
+        
+        // Auto-redirect after 10 seconds if not admin
+        let countdown = 10;
+        const redirectTimer = setInterval(() => {
+            countdown--;
+            if (countdown <= 0) {
+                window.location.href = '@Url.Action("Index", "Home")';
+                clearInterval(redirectTimer);
+            }
+        }, 1000);
+        
+        // Clear timer if user navigates away
+        window.addEventListener('beforeunload', () => {
+            clearInterval(redirectTimer);
+        });
+    </script>
+}

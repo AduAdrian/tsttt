@@ -3,26 +3,30 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models;
+using WebApplication1.Data;
 
 namespace WebApplication1.Controllers
 {
-    [Authorize]
     public class AdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<AdminController> _logger;
 
         public AdminController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext context,
             ILogger<AdminController> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context;
             _logger = logger;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Dashboard()
         {
@@ -43,17 +47,38 @@ namespace WebApplication1.Controllers
                 .Take(5)
                 .ToListAsync();
 
+            // Appointment statistics
+            var totalAppointments = await _context.Appointments.CountAsync();
+            var todayAppointments = await _context.Appointments
+                .CountAsync(a => a.AppointmentDate.Date == DateTime.Today);
+            var upcomingAppointments = await _context.Appointments
+                .CountAsync(a => a.AppointmentDate > DateTime.Now && a.Status != AppointmentStatus.Cancelled);
+            var completedAppointments = await _context.Appointments
+                .CountAsync(a => a.Status == AppointmentStatus.Completed);
+                
+            var recentAppointments = await _context.Appointments
+                .Include(a => a.CreatedByUser)
+                .OrderByDescending(a => a.CreatedAt)
+                .Take(5)
+                .ToListAsync();
+
             var model = new AdminDashboardViewModel
             {
                 TotalUsers = totalUsers,
                 ConfirmedUsers = confirmedUsers,
                 UnconfirmedUsers = unconfirmedUsers,
-                RecentUsers = recentUsers
+                RecentUsers = recentUsers,
+                TotalAppointments = totalAppointments,
+                TodayAppointments = todayAppointments,
+                UpcomingAppointments = upcomingAppointments,
+                CompletedAppointments = completedAppointments,
+                RecentAppointments = recentAppointments
             };
 
             return View(model);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Users()
         {
@@ -79,6 +104,7 @@ namespace WebApplication1.Controllers
             return View(userViewModels);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> ConfirmUserEmail(string userId)
         {
@@ -106,6 +132,7 @@ namespace WebApplication1.Controllers
             return Json(new { success = false, message = "Eroare la confirmarea emailului" });
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string userId)
         {
@@ -136,6 +163,7 @@ namespace WebApplication1.Controllers
             return Json(new { success = false, message = "Eroare la stergerea utilizatorului" });
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> SystemInfo()
         {
@@ -154,87 +182,11 @@ namespace WebApplication1.Controllers
                 MachineName = Environment.MachineName,
                 ProcessorCount = Environment.ProcessorCount,
                 WorkingSet = Environment.WorkingSet / 1024 / 1024, // MB
-                TotalUsers = await _userManager.Users.CountAsync()
+                TotalUsers = await _userManager.Users.CountAsync(),
+                TotalAppointments = await _context.Appointments.CountAsync()
             };
 
             return View(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> InitializeAdmin()
-        {
-            // Verifica daca exista deja un admin
-            if (await _roleManager.RoleExistsAsync("Admin"))
-            {
-                var admins = await _userManager.GetUsersInRoleAsync("Admin");
-                if (admins.Any())
-                {
-                    ViewBag.Message = "Sistemul are deja un administrator.";
-                    return View();
-                }
-            }
-
-            // Creaza rolul de admin daca nu exista
-            if (!await _roleManager.RoleExistsAsync("Admin"))
-            {
-                await _roleManager.CreateAsync(new IdentityRole("Admin"));
-            }
-
-            ViewBag.Message = "Poti crea primul administrator al sistemului.";
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateAdmin(string username, string email, string phoneNumber, string password, string confirmPassword)
-        {
-            if (password != confirmPassword)
-            {
-                ModelState.AddModelError(string.Empty, "Parolele nu coincid.");
-                return View("InitializeAdmin");
-            }
-
-            // Verifica daca exista deja un admin
-            if (await _roleManager.RoleExistsAsync("Admin"))
-            {
-                var admins = await _userManager.GetUsersInRoleAsync("Admin");
-                if (admins.Any())
-                {
-                    ViewBag.Error = "Sistemul are deja un administrator.";
-                    return View("InitializeAdmin");
-                }
-            }
-
-            var adminUser = new ApplicationUser
-            {
-                UserName = username,
-                Email = email,
-                PhoneNumber = phoneNumber,
-                EmailConfirmed = true // Adminul nu trebuie sa confirme emailul
-            };
-
-            var result = await _userManager.CreateAsync(adminUser, password);
-            if (result.Succeeded)
-            {
-                // Creaza rolul daca nu exista
-                if (!await _roleManager.RoleExistsAsync("Admin"))
-                {
-                    await _roleManager.CreateAsync(new IdentityRole("Admin"));
-                }
-
-                // Adauga utilizatorul la rolul de admin
-                await _userManager.AddToRoleAsync(adminUser, "Admin");
-
-                _logger.LogInformation($"First admin created: {username}");
-                ViewBag.Success = $"Administratorul '{username}' a fost creat cu succes! Te poti conecta acum.";
-                return View("InitializeAdmin");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
-            return View("InitializeAdmin");
         }
     }
 }

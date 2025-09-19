@@ -1,0 +1,447 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Preview Template Excel";
+    ViewData["UseMainNavigation"] = "true";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Header -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="text-white text-center py-3">
+                        <h2 class="mb-2">
+                            <i class="fas fa-file-excel"></i> 
+                            Template Excel Automatizat
+                        </h2>
+                        <p class="mb-0 lead">
+                            Sistem complet de gestionare clien?i ITP - Miseda Inspect SRL
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <a href="@Url.Action("DownloadSmartTemplate", "Template")" 
+                       class="btn btn-success btn-lg w-100 shadow">
+                        <i class="fas fa-download fa-2x d-block mb-2"></i>
+                        <strong>Descarc? Template</strong>
+                        <br><small>Excel automatizat</small>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="@Url.Action("Import", "Template")" 
+                       class="btn btn-primary btn-lg w-100 shadow">
+                        <i class="fas fa-upload fa-2x d-block mb-2"></i>
+                        <strong>Import? Date</strong>
+                        <br><small>Din Excel</small>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="@Url.Action("DownloadInstructionsGuide", "Template")" 
+                       class="btn btn-info btn-lg w-100 shadow">
+                        <i class="fas fa-book fa-2x d-block mb-2"></i>
+                        <strong>Ghid Utilizare</strong>
+                        <br><small>Instruc?iuni complete</small>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Structura Template -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-table"></i> 
+                        Structura Template Excel
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Coloan?</th>
+                                    <th>Nume</th>
+                                    <th>Tip</th>
+                                    <th>Obligatoriu</th>
+                                    <th>Exemplu</th>
+                                    <th>Descriere</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{int colIndex = 0;}
+                                @foreach (var column in Model.Columns)
+                                {
+                                    colIndex++;
+                                    string colLetter = ((char)('A' + colIndex - 1)).ToString();
+                                    <tr>
+                                        <td class="text-center fw-bold">@colLetter</td>
+                                        <td class="fw-bold">@column.Name</td>
+                                        <td>
+                                            <span class="badge @(column.Type.Contains("Calculat") ? "bg-success" : column.Type.Contains("Dropdown") ? "bg-warning" : "bg-primary")">
+                                                @column.Type
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            @if (column.Required)
+                                            {
+                                                <i class="fas fa-check text-success"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-times text-muted"></i>
+                                            }
+                                        </td>
+                                        <td><code>@column.Example</code></td>
+                                        <td class="small">@column.Description</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automatiz?ri -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-magic"></i> 
+                        Automatiz?ri Integrate
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var feature in Model.Features)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center p-3 border rounded bg-light">
+                                    <i class="fas fa-check-circle text-success me-3"></i>
+                                    <span>@feature</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formule Excel -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calculator"></i> 
+                        Formule Excel Automatizate
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var formula in Model.AutomationFormulas)
+                        {
+                            <div class="col-lg-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body p-3">
+                                        <code class="d-block text-primary">
+                                            @formula
+                                        </code>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instruc?iuni -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-clipboard-list"></i> 
+                        Instruc?iuni de Utilizare
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var instruction in Model.Instructions)
+                        {
+                            <div class="col-lg-6 mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-arrow-right text-warning mt-1 me-3"></i>
+                                    <span>@instruction</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reguli de Validare -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-shield-alt"></i> 
+                        Reguli de Validare
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var rule in Model.ValidationRules)
+                        {
+                            <div class="col-lg-6 mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-exclamation-triangle text-danger mt-1 me-3"></i>
+                                    <span>@rule</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exemplu Visual -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-eye"></i> 
+                        Exemplu Visual Template
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th style="background-color: #4f81bd; color: white;">A: Nr. Înmatriculare</th>
+                                    <th style="background-color: #4f81bd; color: white;">B: Telefon</th>
+                                    <th style="background-color: #4f81bd; color: white;">C: Tip Valabilitate</th>
+                                    <th style="background-color: #4f81bd; color: white;">D: Data Expirare</th>
+                                    <th style="background-color: #4f81bd; color: white;">E: Status</th>
+                                    <th style="background-color: #4f81bd; color: white;">F: Zile R?mase</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>SV14ABC</strong></td>
+                                    <td>0756596565</td>
+                                    <td>
+                                        <select class="form-select form-select-sm" disabled>
+                                            <option selected>1 An</option>
+                                        </select>
+                                    </td>
+                                    <td class="text-info"><em>calculat automat</em></td>
+                                    <td><span class="badge bg-success">Valid</span></td>
+                                    <td class="text-success"><strong>365</strong></td>
+                                </tr>
+                                <tr style="background-color: #f2f2f2;">
+                                    <td><strong>B123XYZ</strong></td>
+                                    <td>0756596565</td>
+                                    <td>
+                                        <select class="form-select form-select-sm" disabled>
+                                            <option selected>Manual</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="date" class="form-control form-control-sm" value="2025-03-15" disabled></td>
+                                    <td><span class="badge bg-warning">Expir? Curând</span></td>
+                                    <td class="text-warning"><strong>25</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CJ99DEF</strong></td>
+                                    <td>0756596565</td>
+                                    <td>
+                                        <select class="form-select form-select-sm" disabled>
+                                            <option selected>6 Luni</option>
+                                        </select>
+                                    </td>
+                                    <td class="text-info"><em>calculat automat</em></td>
+                                    <td><span class="badge bg-danger">Expirat</span></td>
+                                    <td class="text-danger"><strong>-5</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Not?:</strong> Coloanele D, E, F se completeaz? automat pe baza formulelor Excel integrate. 
+                        Pentru tipul "Manual", introduci data manual în coloana D.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Sheet-uri -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-layer-group"></i> 
+                        4 Sheet-uri Incluse
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <i class="fas fa-database"></i> Date Clien?i
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text small">
+                                        Sheet-ul principal cu toate automatiz?rile, valid?rile ?i formulele Excel. 
+                                        Aici introduci datele clien?ilor.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <i class="fas fa-book"></i> Instruc?iuni
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text small">
+                                        Ghid pas cu pas pentru utilizarea template-ului, cu explica?ii 
+                                        detaliate ?i exemple practice.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-warning text-dark">
+                                    <i class="fas fa-lightbulb"></i> Exemple
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text small">
+                                        Exemple practice cu date reale Miseda Inspect SRL 
+                                        pentru a în?elege func?ionarea.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <i class="fas fa-chart-bar"></i> Statistici
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text small">
+                                        Statistici live care se actualizeaz? automat pe m?sur? 
+                                        ce completezi datele în template.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer cu ac?iuni -->
+            <div class="card shadow-lg">
+                <div class="card-body text-center">
+                    <h5 class="mb-3">Gata s? începi?</h5>
+                    <div class="d-flex justify-content-center flex-wrap gap-3">
+                        <a href="@Url.Action("DownloadSmartTemplate", "Template")" 
+                           class="btn btn-success btn-lg">
+                            <i class="fas fa-download"></i> 
+                            Descarc? Template Acum
+                        </a>
+                        <a href="@Url.Action("Import", "Template")" 
+                           class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload"></i> 
+                            Import? Date Excel
+                        </a>
+                        <a href="@Url.Action("Index", "Clients")" 
+                           class="btn btn-outline-secondary">
+                            <i class="fas fa-users"></i> 
+                            Vezi Clien?ii Existen?i
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate cards on load
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add hover effects to buttons
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '';
+                });
+            });
+
+            // Copy formula code on click
+            document.querySelectorAll('code').forEach(codeBlock => {
+                codeBlock.style.cursor = 'pointer';
+                codeBlock.title = 'Click pentru a copia formula';
+                
+                codeBlock.addEventListener('click', function() {
+                    navigator.clipboard.writeText(this.textContent).then(() => {
+                        const originalText = this.textContent;
+                        this.textContent = 'Copiat! ?';
+                        this.style.color = 'green';
+                        
+                        setTimeout(() => {
+                            this.textContent = originalText;
+                            this.style.color = '';
+                        }, 2000);
+                    });
+                });
+            });
+
+            console.log('?? Template Preview loaded successfully');
+            console.log('?? Template Excel Automatizat - Miseda Inspect SRL');
+        });
+    </script>
+
+    <style>
+        .bg-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+        
+        .card {
+            transition: transform 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        code {
+            background-color: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .table th {
+            border-color: #dee2e6;
+            vertical-align: middle;
+        }
+        
+        .badge {
+            font-size: 0.8em;
+        }
+    </style>
+}

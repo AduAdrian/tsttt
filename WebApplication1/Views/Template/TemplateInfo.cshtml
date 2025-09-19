@@ -1,0 +1,464 @@
+@{
+    ViewData["Title"] = "Informa?ii Template Excel";
+    ViewData["UseMainNavigation"] = "true";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Header -->
+            <div class="card border-0 shadow-lg mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-file-excel" style="font-size: 4rem; opacity: 0.9;"></i>
+                    </div>
+                    <h1 class="display-4 fw-bold mb-3">Template Excel Automatizat</h1>
+                    <p class="lead mb-4">Sistem complet de gestionare clien?i ITP pentru Miseda Inspect SRL</p>
+                    
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="h3 fw-bold">500</div>
+                            <small>Clien?i Max</small>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="h3 fw-bold">4</div>
+                            <small>Sheet-uri</small>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="h3 fw-bold">100%</div>
+                            <small>Automatizat</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <a href="@Url.Action("DownloadSmartTemplate", "Template")" 
+                       class="btn btn-success btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4 shadow">
+                        <i class="fas fa-download fa-3x mb-3"></i>
+                        <h5 class="mb-2">Descarc? Template</h5>
+                        <small>Fi?ier Excel automatizat</small>
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="@Url.Action("Import", "Template")" 
+                       class="btn btn-primary btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4 shadow">
+                        <i class="fas fa-upload fa-3x mb-3"></i>
+                        <h5 class="mb-2">Import? Date</h5>
+                        <small>Din Excel în sistem</small>
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="@Url.Action("PreviewTemplate", "Template")" 
+                       class="btn btn-info btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4 shadow">
+                        <i class="fas fa-eye fa-3x mb-3"></i>
+                        <h5 class="mb-2">Preview Complet</h5>
+                        <small>Vezi toate detaliile</small>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Caracteristici Principale -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-star"></i> 
+                        Caracteristici Principale
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-magic"></i> 
+                                Automatiz?ri Excel
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Dropdown inteligent pentru tip valabilitate
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Calculare automat? date expirare
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Status colorat automat (Valid/Expirat)
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Contador zile r?mase
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Valid?ri automate telefon/înmatriculare
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-success mb-3">
+                                <i class="fas fa-shield-alt"></i> 
+                                Protec?ii & Siguran??
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-lock text-warning me-2"></i>
+                                    Template protejat cu parol?
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-lock text-warning me-2"></i>
+                                    Coloane calculate protejate
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-ban text-danger me-2"></i>
+                                    Prevenire delete/insert rânduri
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    Valid?ri pentru duplicate
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-database text-info me-2"></i>
+                                    Import înlocuie?te complet BD
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow Utilizare -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-route"></i> 
+                        Workflow de Utilizare
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="card h-100 border-success">
+                                <div class="card-body">
+                                    <div class="text-success mb-3">
+                                        <i class="fas fa-download fa-3x"></i>
+                                    </div>
+                                    <h5 class="text-success">Pasul 1</h5>
+                                    <p class="small">Descarc? template-ul Excel automatizat</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="card h-100 border-primary">
+                                <div class="card-body">
+                                    <div class="text-primary mb-3">
+                                        <i class="fas fa-edit fa-3x"></i>
+                                    </div>
+                                    <h5 class="text-primary">Pasul 2</h5>
+                                    <p class="small">Completeaz? doar col. A, B, C cu datele clien?ilor</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="card h-100 border-info">
+                                <div class="card-body">
+                                    <div class="text-info mb-3">
+                                        <i class="fas fa-magic fa-3x"></i>
+                                    </div>
+                                    <h5 class="text-info">Pasul 3</h5>
+                                    <p class="small">Coloanele D, E, F se completeaz? automat</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <div class="card h-100 border-warning">
+                                <div class="card-body">
+                                    <div class="text-warning mb-3">
+                                        <i class="fas fa-upload fa-3x"></i>
+                                    </div>
+                                    <h5 class="text-warning">Pasul 4</h5>
+                                    <p class="small">Import? fi?ierul în sistem</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formule Excel -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-calculator"></i> 
+                        Formule Excel Integrate
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">?? Calculare Data Expirare:</h6>
+                            <div class="border rounded p-3 bg-light mb-3">
+                                <code class="d-block mb-1">6 Luni = TODAY() + 180</code>
+                                <code class="d-block mb-1">1 An = TODAY() + 365</code>
+                                <code class="d-block mb-1">2 Ani = TODAY() + 730</code>
+                                <code class="d-block">Manual = Introdu manual</code>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-success">?? Calculare Status:</h6>
+                            <div class="border rounded p-3 bg-light mb-3">
+                                <code class="d-block mb-1">IF(Data < TODAY(), "Expirat",</code>
+                                <code class="d-block mb-1">IF(Data < TODAY()+30, "Expir? Curând",</code>
+                                <code class="d-block">"Valid"))</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-warning">? Calculare Zile R?mase:</h6>
+                            <div class="border rounded p-3 bg-light mb-3">
+                                <code class="d-block">Data_Expirare - TODAY()</code>
+                                <small class="text-muted d-block mt-2">Se actualizeaz? zilnic automat</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-danger">? Valid?ri:</h6>
+                            <div class="border rounded p-3 bg-light mb-3">
+                                <small class="d-block mb-1">• Telefon: 10 cifre, început 07</small>
+                                <small class="d-block mb-1">• Nr. înmat.: 6-10 caractere</small>
+                                <small class="d-block">• Data manual: max 3 ani</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistici Template -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> 
+                        Statistici Live Template
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Sheet-ul "Statistici" ofer? analize în timp real:</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-users text-primary me-2"></i>
+                                    <strong>Total clien?i introdu?i</strong>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <strong>Clien?i valizi</strong> (verde)
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    <strong>Clien?i ce expir? curând</strong> (galben)
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-times-circle text-danger me-2"></i>
+                                    <strong>Clien?i expira?i</strong> (ro?u)
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-chart-pie text-info me-2"></i>
+                                    <strong>Distribu?ie pe tip valabilitate</strong>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-calculator text-secondary me-2"></i>
+                                    <strong>Media zile pân? la expirare</strong>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-clock text-warning me-2"></i>
+                                    <strong>Primul ITP care expir?</strong>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-bell text-danger me-2"></i>
+                                    <strong>Total notific?ri necesare</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Actualizare automat?:</strong> Apas? F9 sau Ctrl+Alt+F9 pentru a reîmprosp?ta statisticile.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suport ?i Contact -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-headset"></i> 
+                        Suport ?i Contact
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-secondary">?? Contact Miseda Inspect SRL:</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-phone text-success me-2"></i>
+                                    <strong>0756596565</strong>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-envelope text-primary me-2"></i>
+                                    <strong>notificari-sms@misedainspect.ro</strong>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                    <strong>R?d?u?i, Suceava</strong>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-secondary">?? Suport Tehnic:</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-lock text-warning me-2"></i>
+                                    Parol? template: <code>miseda2024</code>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-download text-info me-2"></i>
+                                    Format acceptat: .xlsx, .xls
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-hdd text-secondary me-2"></i>
+                                    Dimensiune max: 10MB
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer cu ac?iuni finale -->
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center p-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="text-white">
+                        <h3 class="mb-4">Gata s? folose?ti template-ul?</h3>
+                        <p class="lead mb-4">Descarc?, completeaz? ?i import? - e a?a de simplu!</p>
+                        
+                        <div class="d-flex justify-content-center flex-wrap gap-3">
+                            <a href="@Url.Action("DownloadSmartTemplate", "Template")" 
+                               class="btn btn-light btn-lg px-4">
+                                <i class="fas fa-download text-success"></i> 
+                                Descarc? Template
+                            </a>
+                            <a href="@Url.Action("DownloadInstructionsGuide", "Template")" 
+                               class="btn btn-outline-light btn-lg px-4">
+                                <i class="fas fa-book"></i> 
+                                Ghid Complet
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Anima?ii pentru carduri
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+
+            // Hover effects pentru butoane
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('btn-outline-light')) {
+                        this.style.transform = 'translateY(-3px)';
+                        this.style.boxShadow = '0 6px 12px rgba(0,0,0,0.2)';
+                    }
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '';
+                });
+            });
+
+            // Copy functionality pentru formule
+            document.querySelectorAll('code').forEach(codeBlock => {
+                codeBlock.style.cursor = 'pointer';
+                codeBlock.title = 'Click pentru a copia';
+                
+                codeBlock.addEventListener('click', function() {
+                    const text = this.textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        const originalBg = this.style.backgroundColor;
+                        this.style.backgroundColor = '#d4edda';
+                        this.style.color = '#155724';
+                        
+                        setTimeout(() => {
+                            this.style.backgroundColor = originalBg;
+                            this.style.color = '';
+                        }, 1500);
+                    });
+                });
+            });
+
+            console.log('?? Informa?ii Template Excel loaded successfully');
+            console.log('?? Miseda Inspect SRL - Template Automatizat');
+        });
+    </script>
+
+    <style>
+        .card {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+        
+        code {
+            background-color: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            transition: all 0.2s ease;
+        }
+        
+        code:hover {
+            background-color: #e9ecef;
+            transform: scale(1.02);
+        }
+        
+        .btn {
+            transition: all 0.3s ease;
+        }
+        
+        .list-unstyled li {
+            transition: all 0.2s ease;
+        }
+        
+        .list-unstyled li:hover {
+            transform: translateX(5px);
+        }
+    </style>
+}

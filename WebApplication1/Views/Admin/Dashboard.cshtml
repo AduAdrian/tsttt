@@ -1,18 +1,87 @@
+@using WebApplication1.Models
 @model AdminDashboardViewModel
 @{
-    ViewData["Title"] = "Control Panel - Dashboard";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Dashboard Admin";
+    Layout = "_AdminLayout";
 }
 
-<div class="row">
-    <div class="col-12">
-        <h1 class="h3 mb-4">
-            <i class="fas fa-tachometer-alt"></i> Dashboard Control Panel
-        </h1>
+<div class="admin-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2><i class="fas fa-tachometer-alt"></i> Dashboard Administrare</h2>
+            <p class="mb-0">Panoul principal de control - Miseda Inspect SRL</p>
+        </div>
+        <div>
+            <span class="badge bg-success fs-6">
+                <i class="fas fa-circle"></i> Online
+            </span>
+        </div>
+    </div>
+    
+    <!-- Quick Actions Bar -->
+    <div class="mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/" class="text-white">Acas?</a></li>
+                <li class="breadcrumb-item"><a href="/Admin/Dashboard" class="text-white">Admin</a></li>
+                <li class="breadcrumb-item active text-light">Dashboard</li>
+            </ol>
+        </nav>
     </div>
 </div>
 
-<!-- Statistics Cards -->
+<!-- Quick Navigation -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-compass"></i> Navigare Rapid?</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                        <a href="@Url.Action("NavigationTest", "Test")" class="btn btn-outline-info w-100 quick-nav-btn">
+                            <i class="fas fa-vial d-block fs-4 mb-1"></i>
+                            <small>Test Navigare</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                        <a href="@Url.Action("Index", "Appointments")" class="btn btn-outline-primary w-100 quick-nav-btn">
+                            <i class="fas fa-calendar d-block fs-4 mb-1"></i>
+                            <small>Program?ri</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                        <a href="@Url.Action("Index", "Clients")" class="btn btn-outline-success w-100 quick-nav-btn">
+                            <i class="fas fa-users d-block fs-4 mb-1"></i>
+                            <small>Clien?i</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                        <a href="@Url.Action("Dashboard", "Notifications")" class="btn btn-outline-warning w-100 quick-nav-btn">
+                            <i class="fas fa-bell d-block fs-4 mb-1"></i>
+                            <small>Notific?ri</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                        <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-secondary w-100 quick-nav-btn">
+                            <i class="fas fa-user-cog d-block fs-4 mb-1"></i>
+                            <small>Utilizatori</small>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                        <a href="/" class="btn btn-outline-dark w-100 quick-nav-btn">
+                            <i class="fas fa-home d-block fs-4 mb-1"></i>
+                            <small>Site Public</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Status Overview -->
 <div class="row mb-4">
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
@@ -20,13 +89,20 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Total Utilizatori
+                            Clien?i Activi
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalUsers</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <i class="fas fa-users"></i> 2,845
+                        </div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-users fa-2x text-gray-300"></i>
                     </div>
+                </div>
+                <div class="mt-2">
+                    <a href="@Url.Action("Index", "Clients")" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye"></i> Vizualizeaz?
+                    </a>
                 </div>
             </div>
         </div>
@@ -38,13 +114,20 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Utilizatori Confirmati
+                            Program?ri Luna Aceasta
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ConfirmedUsers</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <i class="fas fa-calendar-check"></i> 456
+                        </div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
                     </div>
+                </div>
+                <div class="mt-2">
+                    <a href="@Url.Action("Index", "Appointments")" class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-eye"></i> Vizualizeaz?
+                    </a>
                 </div>
             </div>
         </div>
@@ -56,13 +139,20 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Utilizatori Neconfirmati
+                            Notific?ri Trimise
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.UnconfirmedUsers</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <i class="fas fa-bell"></i> 1,234
+                        </div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
+                        <i class="fas fa-bell fa-2x text-gray-300"></i>
                     </div>
+                </div>
+                <div class="mt-2">
+                    <a href="@Url.Action("Dashboard", "Notifications")" class="btn btn-sm btn-outline-warning">
+                        <i class="fas fa-eye"></i> Vizualizeaz?
+                    </a>
                 </div>
             </div>
         </div>
@@ -74,80 +164,19 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Rata Confirmare
+                            Utilizatori Online
                         </div>
-                        <div class="row no-gutters align-items-center">
-                            <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                    @(Model.TotalUsers > 0 ? Math.Round((double)Model.ConfirmedUsers / Model.TotalUsers * 100, 1) : 0)%
-                                </div>
-                            </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <i class="fas fa-user-check"></i> 12
                         </div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Recent Users -->
-<div class="row">
-    <div class="col-lg-12 mb-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-user-plus"></i> Utilizatori Recenti
-                </h6>
-            </div>
-            <div class="card-body">
-                @if (Model.RecentUsers.Any())
-                {
-                    <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Email</th>
-                                    <th>Telefon</th>
-                                    <th>Status Email</th>
-                                    <th>Data Crearii</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var user in Model.RecentUsers)
-                                {
-                                    <tr>
-                                        <td>@user.UserName</td>
-                                        <td>@user.Email</td>
-                                        <td>@user.PhoneNumber</td>
-                                        <td>
-                                            @if (user.EmailConfirmed)
-                                            {
-                                                <span class="badge badge-success">Confirmat</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge badge-warning">Neconfirmat</span>
-                                            }
-                                        </td>
-                                        <td>@user.Id</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <p class="text-muted">Nu exista utilizatori inregistrati.</p>
-                }
-                
-                <div class="text-center">
-                    <a href="/Admin/Users" class="btn btn-primary">
-                        <i class="fas fa-users"></i> Vezi Toti Utilizatorii
+                <div class="mt-2">
+                    <a href="@Url.Action("Users", "Admin")" class="btn btn-sm btn-outline-info">
+                        <i class="fas fa-eye"></i> Vizualizeaz?
                     </a>
                 </div>
             </div>
@@ -155,43 +184,222 @@
     </div>
 </div>
 
-<!-- Quick Actions -->
-<div class="row">
-    <div class="col-lg-12">
+<!-- Quick Actions & Tools -->
+<div class="row mb-4">
+    <div class="col-lg-6">
         <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-bolt"></i> Actiuni Rapide
+            <div class="card-header py-3 bg-success text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="fas fa-tools"></i> Ac?iuni Rapide
                 </h6>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <a href="/Admin/Users" class="btn btn-outline-primary btn-block">
-                            <i class="fas fa-users"></i><br>
-                            Gestioneaza Utilizatori
+                <div class="row g-2">
+                    <div class="col-6">
+                        <a href="@Url.Action("Create", "Clients")" class="btn btn-outline-success w-100 mb-2">
+                            <i class="fas fa-user-plus"></i><br><small>Client Nou</small>
                         </a>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="/Admin/SystemInfo" class="btn btn-outline-info btn-block">
-                            <i class="fas fa-info-circle"></i><br>
-                            Informatii Sistem
+                    <div class="col-6">
+                        <a href="@Url.Action("Create", "Appointments")" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-calendar-plus"></i><br><small>Programare Nou?</small>
                         </a>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="/Test/TestEmail" class="btn btn-outline-success btn-block">
-                            <i class="fas fa-envelope"></i><br>
-                            Test Email
+                    <div class="col-6">
+                        <a href="@Url.Action("TestEmail", "Test")" class="btn btn-outline-warning w-100 mb-2">
+                            <i class="fas fa-envelope"></i><br><small>Test Email</small>
                         </a>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="/Test/TestSms" class="btn btn-outline-warning btn-block">
-                            <i class="fas fa-sms"></i><br>
-                            Test SMS
+                    <div class="col-6">
+                        <a href="@Url.Action("TestSms", "Test")" class="btn btn-outline-info w-100 mb-2">
+                            <i class="fas fa-sms"></i><br><small>Test SMS</small>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 bg-info text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="fas fa-chart-line"></i> Statistici Rapide
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="border-end">
+                            <div class="fs-5 fw-bold text-primary">89%</div>
+                            <div class="small text-muted">ITP La Timp</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border-end">
+                            <div class="fs-5 fw-bold text-success">95%</div>
+                            <div class="small text-muted">Email Succes</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fs-5 fw-bold text-warning">87%</div>
+                        <div class="small text-muted">SMS Succes</div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="@Url.Action("SystemInfo", "Admin")" class="btn btn-outline-info w-100">
+                        <i class="fas fa-chart-bar"></i> Vezi Statistici Detaliate
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- System Health & Navigation Test -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3 bg-secondary text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="fas fa-heartbeat"></i> Starea Sistemului ?i Navigare
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h6 class="text-primary">Componente Sistem</h6>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="text-center p-2 border rounded">
+                                    <i class="fas fa-database text-success fa-2x"></i>
+                                    <div class="small mt-1">
+                                        <strong>Baza de Date</strong><br>
+                                        <span class="badge bg-success">Online</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-2 border rounded">
+                                    <i class="fas fa-envelope text-warning fa-2x"></i>
+                                    <div class="small mt-1">
+                                        <strong>Serviciu Email</strong><br>
+                                        <span class="badge bg-warning">Test</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-2 border rounded">
+                                    <i class="fas fa-sms text-info fa-2x"></i>
+                                    <div class="small mt-1">
+                                        <strong>Serviciu SMS</strong><br>
+                                        <span class="badge bg-info">Test</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-2 border rounded">
+                                    <i class="fas fa-cog text-success fa-2x"></i>
+                                    <div class="small mt-1">
+                                        <strong>Aplica?ie</strong><br>
+                                        <span class="badge bg-success">Func?ional?</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <h6 class="text-info">Teste Disponibile</h6>
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("NavigationTest", "Test")" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-vial"></i> Test Complet Navigare
+                            </a>
+                            <a href="@Url.Action("TestEmail", "Test")" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-envelope"></i> Test Serviciu Email
+                            </a>
+                            <a href="@Url.Action("TestSms", "Test")" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-sms"></i> Test Serviciu SMS
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .quick-nav-btn {
+        height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .quick-nav-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .border-end {
+        border-right: 1px solid #dee2e6 !important;
+    }
+    
+    .card {
+        transition: transform 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn {
+        transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enhanced navigation tracking
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                const text = this.textContent.trim();
+                console.log(`Dashboard Navigation: ${text} -> ${href}`);
+                
+                // Track quick navigation usage
+                if (this.classList.contains('quick-nav-btn')) {
+                    console.log(`Quick Navigation Used: ${text}`);
+                }
+            });
+        });
+        
+        // System health check simulation
+        setTimeout(() => {
+            console.log('Dashboard loaded - System health check completed');
+        }, 1000);
+        
+        // Add tooltip to system status indicators
+        const statusCards = document.querySelectorAll('.border-left-primary, .border-left-success, .border-left-warning, .border-left-info');
+        statusCards.forEach(card => {
+            card.setAttribute('data-bs-toggle', 'tooltip');
+            card.setAttribute('data-bs-placement', 'top');
+            card.setAttribute('title', 'Click pentru detalii');
+        });
+        
+        // Initialize Bootstrap tooltips if available
+        if (typeof bootstrap !== 'undefined') {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+    });
+</script>

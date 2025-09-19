@@ -1,0 +1,220 @@
+@using WebApplication1.Models
+@model NotificationDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard Notific?ri";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">
+            <i class="fas fa-bell"></i> Dashboard Notific?ri ITP
+        </h1>
+    </div>
+</div>
+
+<!-- Statistics Cards pentru fiecare nivel de notificare -->
+<div class="row mb-4">
+    <!-- 30 zile - Albastru -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            ITP-uri expirând în 30 zile
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.Clients30Days clien?i
+                        </div>
+                        <div class="small text-muted">
+                            Trimise: @Model.Sent30Days | Netrimise: @Model.NotSent30Days
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <form method="post" asp-action="RunNotifications30Days" style="display: inline;">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-paper-plane"></i> Trimite Notific?ri 30 zile
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7 zile - Galben -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            ITP-uri expirând în 7 zile
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.Clients7Days clien?i
+                        </div>
+                        <div class="small text-muted">
+                            Trimise: @Model.Sent7Days | Netrimise: @Model.NotSent7Days
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <form method="post" asp-action="RunNotifications7Days" style="display: inline;">
+                        <button type="submit" class="btn btn-warning btn-sm">
+                            <i class="fas fa-paper-plane"></i> Trimite Notific?ri 7 zile
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1 zi - Ro?u -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            ITP-uri expirând în 1 zi
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.Clients1Day clien?i
+                        </div>
+                        <div class="small text-muted">
+                            Trimise: @Model.Sent1Day | Netrimise: @Model.NotSent1Day
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <form method="post" asp-action="RunNotifications1Day" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-paper-plane"></i> Trimite Notific?ri 1 zi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-bolt"></i> Ac?iuni Rapide
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <form method="post" asp-action="RunNotifications" style="display: inline;">
+                            <button type="submit" class="btn btn-success btn-block">
+                                <i class="fas fa-play"></i><br>
+                                <strong>Trimite Toate Notific?rile</strong>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="@Url.Action("Index")" class="btn btn-info btn-block">
+                            <i class="fas fa-history"></i><br>
+                            <strong>Istoric Notific?ri</strong>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="@Url.Action("Index", "Clients")" class="btn btn-outline-secondary btn-block">
+                            <i class="fas fa-users"></i><br>
+                            <strong>Gestioneaz? Clien?i</strong>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="text-center">
+                            <div class="small text-muted mb-2">Orele de lucru</div>
+                            <div class="badge badge-info p-2">
+                                <i class="fas fa-clock"></i> 8:00 - 21:00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notific?ri recente -->
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-clock"></i> Notific?ri Recente
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.RecentNotifications?.Any() == true)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Nr. Înmatriculare</th>
+                                    <th>Zile</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var notification in Model.RecentNotifications.Take(10))
+                                {
+                                    <tr>
+                                        <td>@notification.ClientRegistrationNumber</td>
+                                        <td>
+                                            <span class="@notification.TypeBadgeClass">
+                                                @notification.GetDaysText()
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="@notification.StatusBadgeClass">
+                                                @notification.Status.GetDisplayName()
+                                            </span>
+                                        </td>
+                                        <td>@notification.CreatedAt.ToString("dd.MM HH:mm")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center">Nu exist? notific?ri recente.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.ClientsWithoutPhone > 0)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Aten?ie:</strong> Exist? @Model.ClientsWithoutPhone clien?i f?r? num?r de telefon.
+            </div>
+        </div>
+    </div>
+}

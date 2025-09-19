@@ -140,7 +140,7 @@
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @@media (max-width: 768px) {
             .sidebar {
                 margin-left: calc(var(--sidebar-width) * -1);
             }
@@ -188,19 +188,37 @@
 
         <ul class="sidebar-nav">
             <li>
-                <a href="/Admin/Dashboard">
+                <a href="/Admin/Dashboard" data-section="admin">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="/Admin/Users">
+                <a href="/Admin/Users" data-section="admin">
                     <i class="fas fa-users"></i>
                     <span>Utilizatori</span>
                 </a>
             </li>
             <li>
-                <a href="/Admin/SystemInfo">
+                <a href="/Notifications/Dashboard" data-section="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span>Notific?ri ITP</span>
+                </a>
+            </li>
+            <li>
+                <a href="/Appointments" data-section="appointments">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Program?ri</span>
+                </a>
+            </li>
+            <li>
+                <a href="/Clients" data-section="clients">
+                    <i class="fas fa-car"></i>
+                    <span>Clien?i ITP</span>
+                </a>
+            </li>
+            <li>
+                <a href="/Admin/SystemInfo" data-section="admin">
                     <i class="fas fa-info-circle"></i>
                     <span>Informatii Sistem</span>
                 </a>
@@ -209,13 +227,13 @@
                 <hr style="border-color: rgba(255,255,255,0.2); margin: 1rem 1.5rem;">
             </li>
             <li>
-                <a href="/Test/TestEmail">
+                <a href="/Test/TestEmail" data-section="test">
                     <i class="fas fa-envelope"></i>
                     <span>Test Email</span>
                 </a>
             </li>
             <li>
-                <a href="/Test/TestSms">
+                <a href="/Test/TestSms" data-section="test">
                     <i class="fas fa-sms"></i>
                     <span>Test SMS</span>
                 </a>
@@ -224,7 +242,7 @@
                 <hr style="border-color: rgba(255,255,255,0.2); margin: 1rem 1.5rem;">
             </li>
             <li>
-                <a href="/Home">
+                <a href="/Home" data-section="home">
                     <i class="fas fa-home"></i>
                     <span>Inapoi la Site</span>
                 </a>
@@ -272,13 +290,71 @@
             document.querySelector('.sidebar').classList.toggle('show');
         });
 
-        // Active link highlighting
-        const currentPath = window.location.pathname;
-        document.querySelectorAll('.sidebar-nav a').forEach(link => {
-            if (link.getAttribute('href') === currentPath) {
-                link.classList.add('active');
+        // Improved active link highlighting
+        function setActiveNavLink() {
+            const currentPath = window.location.pathname.toLowerCase();
+            const navLinks = document.querySelectorAll('.sidebar-nav a[data-section]');
+            
+            // Remove all active classes first
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            // Determine which section we're in based on URL patterns
+            let activeSection = null;
+            
+            if (currentPath.startsWith('/admin/')) {
+                activeSection = 'admin';
+            } else if (currentPath.startsWith('/notifications/')) {
+                activeSection = 'notifications';
+            } else if (currentPath.startsWith('/appointments/')) {
+                activeSection = 'appointments';
+            } else if (currentPath.startsWith('/clients/')) {
+                activeSection = 'clients';
+            } else if (currentPath.startsWith('/test/')) {
+                activeSection = 'test';
+            } else if (currentPath.startsWith('/home') || currentPath === '/') {
+                activeSection = 'home';
             }
-        });
+            
+            // If we identified a section, mark the appropriate link as active
+            if (activeSection) {
+                // For exact path matches first
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href').toLowerCase() === currentPath) {
+                        link.classList.add('active');
+                        return;
+                    }
+                });
+                
+                // If no exact match found, use section matching
+                const hasExactMatch = Array.from(navLinks).some(link => link.classList.contains('active'));
+                if (!hasExactMatch) {
+                    navLinks.forEach(link => {
+                        if (link.getAttribute('data-section') === activeSection) {
+                            // For admin section, prioritize the most specific match
+                            if (activeSection === 'admin') {
+                                if (currentPath.includes('/systeminfo') && link.getAttribute('href').toLowerCase().includes('/systeminfo')) {
+                                    link.classList.add('active');
+                                } else if (currentPath.includes('/users') && link.getAttribute('href').toLowerCase().includes('/users')) {
+                                    link.classList.add('active');
+                                } else if (currentPath.includes('/dashboard') && link.getAttribute('href').toLowerCase().includes('/dashboard')) {
+                                    link.classList.add('active');
+                                } else if (!currentPath.includes('/systeminfo') && !currentPath.includes('/users') && link.getAttribute('href').toLowerCase().includes('/dashboard')) {
+                                    link.classList.add('active');
+                                }
+                            } else {
+                                // For other sections, just mark the first matching section
+                                if (!Array.from(navLinks).some(l => l.classList.contains('active'))) {
+                                    link.classList.add('active');
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+        
+        // Set active link on page load
+        document.addEventListener('DOMContentLoaded', setActiveNavLink);
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

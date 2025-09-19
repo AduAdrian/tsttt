@@ -1,64 +1,83 @@
 @{
-    ViewData["Title"] = "Acasa";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Miseda Inspect SRL - Notific?ri Clien?i";
 }
 
-<div class="main-header">
-    <div class="login-nav">
+<div class="container mt-5">
+    <div class="main-header">
+        <div class="company-name">Miseda Inspect SRL</div>
+        <div class="subtitle">Sistem de Notific?ri Clien?i</div>
+        <partial name="_SimpleNavigation" />
+    </div>
+
+    <div class="content-wrapper">
         @if (User.Identity?.IsAuthenticated == true)
         {
-            <span style="color: white; margin-right: 10px;">Buna, @User.Identity.Name!</span>
-            <form method="post" action="/Account/Logout" style="display: inline;">
-                <button type="submit" class="btn btn-sm btn-outline-light">Deconectare</button>
-            </form>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fas fa-bell fa-3x text-primary"></i>
+                            </div>
+                            <h4 class="card-title">Notific?ri</h4>
+                            <p class="card-text flex-grow-1">Gestioneaz? ?i trimite notific?ri c?tre clien?i</p>
+                            <a href="@Url.Action("Dashboard", "Notifications")" class="btn btn-primary">
+                                <i class="fas fa-arrow-right"></i> Acceseaz?
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fas fa-users fa-3x text-success"></i>
+                            </div>
+                            <h4 class="card-title">Clien?i</h4>
+                            <p class="card-text flex-grow-1">Administreaz? baza de date cu clien?i</p>
+                            <a href="@Url.Action("Index", "Clients")" class="btn btn-success">
+                                <i class="fas fa-arrow-right"></i> Acceseaz?
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fas fa-chart-bar fa-3x text-info"></i>
+                            </div>
+                            <h4 class="card-title">Rapoarte</h4>
+                            <p class="card-text flex-grow-1">Vizualizeaz? statistici ?i rapoarte</p>
+                            <a href="#" class="btn btn-info">
+                                <i class="fas fa-arrow-right"></i> Acceseaz?
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="text-center mt-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-crown"></i> <strong>Administrator:</strong> 
+                        Ai acces la <a asp-controller="Admin" asp-action="Dashboard" class="alert-link">Control Panel</a> pentru administrarea sistemului.
+                    </div>
+                </div>
+            }
         }
         else
         {
-            <a href="/Account/Login">Conectare</a>
+            <div class="text-center">
+                <h2>Bine ai venit!</h2>
+                <p class="lead">Sistemul de notific?ri pentru clien?ii Miseda Inspect SRL</p>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Conecteaz?-te
+                </a>
+            </div>
         }
-    </div>
-    <div class="company-name">
-        Miseda Inspect SRL
-    </div>
-    <div class="subtitle">
-        Notificari Clienti
-    </div>
-</div>
-
-<div class="content-wrapper">
-    <div class="row">
-        <div class="col-md-12">
-            <h2 class="text-center mb-4">Bine ati venit!</h2>
-            <p class="lead text-center">
-                Platforma pentru gestionarea notificarilor clientilor Miseda Inspect SRL
-            </p>
-        </div>
-    </div>
-    
-    <div class="row mt-5">
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Notificari</h5>
-                    <p class="card-text">Gestioneaza si trimite notificari catre clienti</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Clienti</h5>
-                    <p class="card-text">Administreaza baza de date cu clientii</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Rapoarte</h5>
-                    <p class="card-text">Vizualizeaza statistici si rapoarte</p>
-                </div>
-            </div>
-        </div>
     </div>
 </div>

@@ -1,0 +1,44 @@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<WebApplication1.Models.ApplicationUser> UserManager
+
+<div class="top-nav">
+    <div class="nav-left">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a href="@Url.Action("Index", "Home")" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-home"></i> Acasa
+            </a>
+        }
+    </div>
+    
+    <div class="nav-right">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            var currentUser = await UserManager.GetUserAsync(User);
+            bool isAdmin = currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin");
+            
+            <span class="user-info">
+                <i class="fas fa-user"></i> Buna, @User.Identity.Name!
+            </span>
+            
+            @if (isAdmin)
+            {
+                <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-sm btn-cpanel">
+                    <i class="fas fa-cogs"></i> Control Panel
+                </a>
+            }
+            
+            <form method="post" action="/Account/Logout" style="display: inline;">
+                <button type="submit" class="btn btn-sm btn-outline-light">
+                    <i class="fas fa-sign-out-alt"></i> Deconectare
+                </button>
+            </form>
+        }
+        else
+        {
+            <a href="/Account/Login" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-sign-in-alt"></i> Conectare
+            </a>
+        }
+    </div>
+</div>

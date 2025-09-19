@@ -1,0 +1,348 @@
+@model AppointmentDetailsViewModel
+@{
+    ViewData["Title"] = "Detalii programare";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">@ViewData["Title"]</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Înapoi
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Appointment.Id" class="btn btn-sm btn-warning">
+                <i class="fas fa-edit"></i> Editeaz?
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Appointment Details Card -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.Appointment.Title</h6>
+                <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow">
+                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@Model.Appointment.Id">
+                            <i class="fas fa-edit fa-sm fa-fw mr-2 text-gray-400"></i> Editeaz?
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="#" onclick="deleteAppointment(@Model.Appointment.Id)">
+                            <i class="fas fa-trash fa-sm fa-fw mr-2 text-gray-400"></i> ?terge
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="font-weight-bold">Informa?ii generale</h6>
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td><strong>Data ?i ora:</strong></td>
+                                <td>
+                                    @Model.Appointment.AppointmentDate.ToString("dddd, dd MMMM yyyy")
+                                    <br>
+                                    <small class="text-muted">@Model.Appointment.AppointmentDate.ToString("HH:mm") - @Model.Appointment.EndTime.ToString("HH:mm")</small>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Durat?:</strong></td>
+                                <td>@Model.Appointment.DurationMinutes minute</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status:</strong></td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(Model.Appointment.Status)">
+                                        @Model.Appointment.Status.GetDisplayName()
+                                    </span>
+                                </td>
+                            </tr>
+                            @if (!string.IsNullOrEmpty(Model.Appointment.Location))
+                            {
+                                <tr>
+                                    <td><strong>Loca?ia:</strong></td>
+                                    <td>@Model.Appointment.Location</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="font-weight-bold">Informa?ii client</h6>
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td><strong>Nume:</strong></td>
+                                <td>@Model.Appointment.ClientName</td>
+                            </tr>
+                            @if (!string.IsNullOrEmpty(Model.Appointment.ClientPhone))
+                            {
+                                <tr>
+                                    <td><strong>Telefon:</strong></td>
+                                    <td>
+                                        <a href="tel:@Model.Appointment.ClientPhone">@Model.Appointment.ClientPhone</a>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Appointment.ClientEmail))
+                            {
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td>
+                                        <a href="mailto:@Model.Appointment.ClientEmail">@Model.Appointment.ClientEmail</a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Appointment.Description))
+                {
+                    <hr>
+                    <h6 class="font-weight-bold">Descriere</h6>
+                    <p class="text-muted">@Model.Appointment.Description</p>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Appointment.Notes))
+                {
+                    <hr>
+                    <h6 class="font-weight-bold">Note</h6>
+                    <p class="text-muted">@Model.Appointment.Notes</p>
+                }
+            </div>
+        </div>
+
+        <!-- History Card -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Istoric modific?ri</h6>
+            </div>
+            <div class="card-body">
+                @if (Model.History.Any())
+                {
+                    <div class="timeline">
+                        @foreach (var entry in Model.History)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h6 class="timeline-title">@entry.Action</h6>
+                                    <p class="timeline-description">@entry.Details</p>
+                                    <small class="text-muted">
+                                        @entry.Date.ToString("dd.MM.yyyy HH:mm")
+                                        @if (!string.IsNullOrEmpty(entry.UserName))
+                                        {
+                                            <span> - @entry.UserName</span>
+                                        }
+                                    </small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center">Nu exist? istoricul modific?rilor.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Quick Actions Card -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Ac?iuni rapide</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    @if (Model.Appointment.Status == AppointmentStatus.Scheduled)
+                    {
+                        <button class="btn btn-success btn-sm" onclick="updateStatus(@Model.Appointment.Id, @((int)AppointmentStatus.Confirmed))">
+                            <i class="fas fa-check"></i> Confirm? programarea
+                        </button>
+                    }
+
+                    @if (Model.Appointment.Status == AppointmentStatus.Confirmed)
+                    {
+                        <button class="btn btn-info btn-sm" onclick="updateStatus(@Model.Appointment.Id, @((int)AppointmentStatus.InProgress))">
+                            <i class="fas fa-play"></i> Începe programarea
+                        </button>
+                    }
+
+                    @if (Model.Appointment.Status == AppointmentStatus.InProgress)
+                    {
+                        <button class="btn btn-success btn-sm" onclick="updateStatus(@Model.Appointment.Id, @((int)AppointmentStatus.Completed))">
+                            <i class="fas fa-check-circle"></i> Finalizeaz?
+                        </button>
+                    }
+
+                    @if (Model.Appointment.Status != AppointmentStatus.Cancelled && Model.Appointment.Status != AppointmentStatus.Completed)
+                    {
+                        <button class="btn btn-warning btn-sm" onclick="updateStatus(@Model.Appointment.Id, @((int)AppointmentStatus.Rescheduled))">
+                            <i class="fas fa-calendar-alt"></i> Reprogrameaz?
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="updateStatus(@Model.Appointment.Id, @((int)AppointmentStatus.Cancelled))">
+                            <i class="fas fa-times"></i> Anuleaz?
+                        </button>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Appointment.ClientPhone))
+                    {
+                        <hr>
+                        <a href="tel:@Model.Appointment.ClientPhone" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-phone"></i> Sun? clientul
+                        </a>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Appointment.ClientEmail))
+                    {
+                        <a href="mailto:@Model.Appointment.ClientEmail" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-envelope"></i> Trimite email
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">Informa?ii sistem</h6>
+            </div>
+            <div class="card-body">
+                <small class="text-muted">
+                    <div><strong>Creat la:</strong> @Model.Appointment.CreatedAt.ToString("dd.MM.yyyy HH:mm")</div>
+                    @if (Model.Appointment.UpdatedAt.HasValue)
+                    {
+                        <div><strong>Ultima modificare:</strong> @Model.Appointment.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")</div>
+                    }
+                    @if (Model.Appointment.CreatedByUser != null)
+                    {
+                        <div><strong>Creat de:</strong> @Model.Appointment.CreatedByUser.UserName</div>
+                    }
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetStatusBadgeClass(AppointmentStatus status)
+    {
+        return status switch
+        {
+            AppointmentStatus.Scheduled => "bg-secondary",
+            AppointmentStatus.Confirmed => "bg-primary",
+            AppointmentStatus.InProgress => "bg-info",
+            AppointmentStatus.Completed => "bg-success",
+            AppointmentStatus.Cancelled => "bg-danger",
+            AppointmentStatus.Rescheduled => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+@section Styles {
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e3e6f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -20px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #5a5c69;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #e3e6f0;
+        }
+
+        .timeline-title {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .timeline-description {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function updateStatus(appointmentId, status) {
+            fetch(`/Appointments/UpdateStatus/${appointmentId}`, {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `status=${status}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Eroare: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('A ap?rut o eroare la actualizarea statusului.');
+            });
+        }
+
+        function deleteAppointment(id) {
+            if (confirm('E?ti sigur c? vrei s? ?tergi aceast? programare?')) {
+                fetch(`/Appointments/Delete/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/Appointments';
+                    } else {
+                        alert('Eroare: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('A ap?rut o eroare la ?tergerea program?rii.');
+                });
+            }
+        }
+    </script>
+}

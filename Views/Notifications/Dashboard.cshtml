@@ -1,0 +1,385 @@
+@model WebApplication1.Models.NotificationDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard Notific?ri ITP";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-header">
+    <h2>
+        <i class="fas fa-sms"></i> Dashboard Notific?ri ITP
+    </h2>
+    <p class="mb-0">Monitorizare ?i gestionare notific?ri SMS pentru expirarea ITP</p>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            <i class="fas fa-envelope"></i> Total Notific?ri
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalNotifications</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            <i class="fas fa-paper-plane"></i> Trimise Azi
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.SentToday</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            <i class="fas fa-clock"></i> În A?teptare
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingNotifications</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            <i class="fas fa-users"></i> Clien?i Eligibili
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ClientsEligibleForNotification</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-cogs"></i> Ac?iuni Rapide
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <form method="post" asp-action="RunNotifications" style="display: inline;">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-play"></i> Ruleaz? Notific?ri Acum
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="@Url.Action("BulkSend")" class="btn btn-info w-100">
+                            <i class="fas fa-broadcast-tower"></i> Trimitere în Mas?
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="@Url.Action("Index")" class="btn btn-secondary w-100">
+                            <i class="fas fa-history"></i> Istoric Notific?ri
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="@Url.Action("Index", "Clients")" class="btn btn-primary w-100">
+                            <i class="fas fa-users"></i> Gestioneaz? Clien?i
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-chart-pie"></i> Statistici Notific?ri
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 text-center">
+                        <div class="text-success">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                            <h4 class="mt-2">@Model.SuccessRate%</h4>
+                            <small>Rata de Succes</small>
+                        </div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div class="text-danger">
+                            <i class="fas fa-times-circle fa-2x"></i>
+                            <h4 class="mt-2">@Model.FailedNotifications</h4>
+                            <small>E?uate</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-exclamation-triangle"></i> Aten?ie Necesar?
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 text-center">
+                        <div class="text-warning">
+                            <i class="fas fa-calendar-times fa-2x"></i>
+                            <h4 class="mt-2">@Model.ClientsExpiringIn7Days</h4>
+                            <small>Expir? în 7 zile</small>
+                        </div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div class="text-info">
+                            <i class="fas fa-phone-slash fa-2x"></i>
+                            <h4 class="mt-2">@Model.ClientsWithoutPhone</h4>
+                            <small>F?r? telefon</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Notifications -->
+@if (Model.RecentNotifications.Any())
+{
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-history"></i> Notific?ri Recente
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Nr. Înmatriculare</th>
+                            <th>Telefon</th>
+                            <th>Status</th>
+                            <th>Data Trimiterii</th>
+                            <th>Zile pân? Expirare</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var notification in Model.RecentNotifications)
+                        {
+                            <tr>
+                                <td><strong>@notification.ClientRegistrationNumber</strong></td>
+                                <td>@notification.PhoneNumber</td>
+                                <td>
+                                    <span class="@notification.StatusBadgeClass">
+                                        @notification.Status.GetDisplayName()
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (notification.SentAt.HasValue)
+                                    {
+                                        @notification.SentAt.Value.ToString("dd/MM HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (notification.DaysUntilExpiry <= 0)
+                                    {
+                                        <span class="text-danger">Expirat</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="@(notification.DaysUntilExpiry <= 7 ? "text-warning" : "text-success")">
+                                            @notification.DaysUntilExpiry zile
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-end">
+                <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-primary">
+                    Vezi toate notific?rile ?
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Upcoming Expirations -->
+@if (Model.UpcomingExpirations.Any())
+{
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-warning">
+                <i class="fas fa-calendar-alt"></i> ITP-uri ce Expir? în Curând
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Nr. Înmatriculare</th>
+                            <th>Telefon</th>
+                            <th>Data Expirare</th>
+                            <th>Zile R?mase</th>
+                            <th>SMS</th>
+                            <th>Ac?iuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var client in Model.UpcomingExpirations)
+                        {
+                            <tr class="@(client.IsExpired ? "table-danger" : client.IsExpiringSoon ? "table-warning" : "")">
+                                <td><strong>@client.RegistrationNumber</strong></td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(client.PhoneNumber))
+                                    {
+                                        <a href="tel:@client.PhoneNumber">@client.PhoneNumber</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>@client.ExpiryDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <span class="@(client.DaysUntilExpiry <= 7 ? "text-danger" : "text-warning")">
+                                        @client.DaysUntilExpiry zile
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (client.IsEligibleForNotification)
+                                    {
+                                        <span class="text-success">?</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning">?</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (client.IsEligibleForNotification)
+                                    {
+                                        <form method="post" asp-action="SendToClient" style="display: inline;">
+                                            <input type="hidden" name="clientId" value="@client.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Trimite SMS">
+                                                <i class="fas fa-sms"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    <a href="@Url.Action("Details", "Clients", new { id = client.Id })" 
+                                       class="btn btn-sm btn-outline-info" title="Vezi detalii">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Clients Without Phone -->
+@if (Model.ClientsNeedingPhone.Any())
+{
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-info">
+                <i class="fas fa-phone-slash"></i> Clien?i f?r? Num?r de Telefon
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                Ace?ti clien?i nu pot primi notific?ri SMS pân? nu li se adaug? num?rul de telefon.
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Nr. Înmatriculare</th>
+                            <th>Data Expirare</th>
+                            <th>Zile R?mase</th>
+                            <th>Ac?iuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var client in Model.ClientsNeedingPhone)
+                        {
+                            <tr>
+                                <td><strong>@client.RegistrationNumber</strong></td>
+                                <td>@client.ExpiryDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <span class="@(client.DaysUntilExpiry <= 7 ? "text-danger" : "text-warning")">
+                                        @client.DaysUntilExpiry zile
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("Edit", "Clients", new { id = client.Id })" 
+                                       class="btn btn-sm btn-outline-primary" title="Editeaz? ?i adaug? telefon">
+                                        <i class="fas fa-edit"></i> Adaug? Telefon
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,314 @@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<WebApplication1.Models.ApplicationUser> UserManager
+
+@{
+    var currentUser = User.Identity?.IsAuthenticated == true ? await UserManager.GetUserAsync(User) : null;
+    bool isAdmin = currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin");
+}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="@Url.Action("Index", "Home")">
+            <i class="fas fa-car me-2"></i>Miseda Inspect SRL
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")" data-nav-section="home">
+                        <i class="fas fa-home me-1"></i>Acas?
+                    </a>
+                </li>
+                
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-nav-section="clients">
+                            <i class="fas fa-users me-1"></i>Clien?i
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Clients")">
+                                <i class="fas fa-list me-2"></i>Lista Clien?i
+                            </a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Create", "Clients")">
+                                <i class="fas fa-plus me-2"></i>Client Nou
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-nav-section="appointments">
+                            <i class="fas fa-calendar-alt me-1"></i>Program?ri
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Appointments")">
+                                <i class="fas fa-list me-2"></i>Lista Program?ri
+                            </a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Create", "Appointments")">
+                                <i class="fas fa-plus me-2"></i>Programare Nou?
+                            </a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Calendar", "Appointments")">
+                                <i class="fas fa-calendar me-2"></i>Calendar
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-nav-section="notifications">
+                            <i class="fas fa-bell me-1"></i>Notific?ri
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Notifications")">
+                                <i class="fas fa-list me-2"></i>Lista Notific?ri
+                            </a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Dashboard", "Notifications")">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    @if (isAdmin)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-nav-section="admin">
+                                <i class="fas fa-cogs me-1"></i>Administrare
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Dashboard", "Admin")">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Users", "Admin")">
+                                    <i class="fas fa-users-cog me-2"></i>Utilizatori
+                                </a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("SystemInfo", "Admin")">
+                                    <i class="fas fa-info-circle me-2"></i>Info Sistem
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="@Url.Action("TestEmail", "Test")">
+                                    <i class="fas fa-envelope me-2"></i>Test Email
+                                </a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("TestSms", "Test")">
+                                    <i class="fas fa-sms me-2"></i>Test SMS
+                                </a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("NavigationTest", "Test")">
+                                    <i class="fas fa-vial me-2"></i>Test Navigare
+                                </a></li>
+                            </ul>
+                        </li>
+                    }
+                }
+            </ul>
+            
+            <ul class="navbar-nav">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>@User.Identity.Name
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/Account/Manage">
+                                <i class="fas fa-user-edit me-2"></i>Profil
+                            </a></li>
+                            <li><a class="dropdown-item" href="/Account/Manage/ChangePassword">
+                                <i class="fas fa-key me-2"></i>Schimb? Parola
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="@Url.Action("Logout", "Account")" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Deconectare
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Login", "Account")">
+                            <i class="fas fa-sign-in-alt me-1"></i>Conectare
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Register", "Account")">
+                            <i class="fas fa-user-plus me-1"></i>Înregistrare
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="bg-light py-2" id="breadcrumbNav" style="display: none;">
+    <div class="container">
+        <ol class="breadcrumb mb-0" id="breadcrumbList">
+            <!-- Breadcrumbs will be populated by JavaScript -->
+        </ol>
+    </div>
+</nav>
+
+<style>
+    .navbar-nav .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 0.375rem;
+    }
+    
+    .dropdown-item:hover {
+        background-color: var(--bs-primary);
+        color: white;
+    }
+    
+    .dropdown-item i {
+        width: 20px;
+    }
+    
+    .breadcrumb-item a {
+        text-decoration: none;
+        color: var(--bs-primary);
+    }
+    
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set active navigation link
+        setActiveNavLink();
+        
+        // Generate breadcrumbs
+        generateBreadcrumbs();
+        
+        // Add keyboard shortcuts
+        addKeyboardShortcuts();
+    });
+    
+    function setActiveNavLink() {
+        const currentPath = window.location.pathname.toLowerCase();
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link[data-nav-section]');
+        
+        // Remove all active classes
+        navLinks.forEach(link => link.classList.remove('active'));
+        
+        // Determine active section
+        let activeSection = '';
+        if (currentPath.includes('/clients')) activeSection = 'clients';
+        else if (currentPath.includes('/appointments')) activeSection = 'appointments';
+        else if (currentPath.includes('/notifications')) activeSection = 'notifications';
+        else if (currentPath.includes('/admin')) activeSection = 'admin';
+        else if (currentPath === '/' || currentPath.includes('/home')) activeSection = 'home';
+        
+        // Set active class
+        if (activeSection) {
+            const activeLink = document.querySelector(`[data-nav-section="${activeSection}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    }
+    
+    function generateBreadcrumbs() {
+        const path = window.location.pathname;
+        const pathSegments = path.split('/').filter(segment => segment);
+        const breadcrumbNav = document.getElementById('breadcrumbNav');
+        const breadcrumbList = document.getElementById('breadcrumbList');
+        
+        if (pathSegments.length <= 1) {
+            breadcrumbNav.style.display = 'none';
+            return;
+        }
+        
+        // Clear existing breadcrumbs
+        breadcrumbList.innerHTML = '';
+        
+        // Add home
+        const homeItem = document.createElement('li');
+        homeItem.className = 'breadcrumb-item';
+        homeItem.innerHTML = '<a href="/"><i class="fas fa-home"></i> Acas?</a>';
+        breadcrumbList.appendChild(homeItem);
+        
+        // Add path segments
+        let currentPath = '';
+        pathSegments.forEach((segment, index) => {
+            currentPath += '/' + segment;
+            const item = document.createElement('li');
+            item.className = 'breadcrumb-item';
+            
+            const displayName = getDisplayName(segment);
+            
+            if (index === pathSegments.length - 1) {
+                item.className += ' active';
+                item.textContent = displayName;
+            } else {
+                item.innerHTML = `<a href="${currentPath}">${displayName}</a>`;
+            }
+            
+            breadcrumbList.appendChild(item);
+        });
+        
+        breadcrumbNav.style.display = 'block';
+    }
+    
+    function getDisplayName(segment) {
+        const displayNames = {
+            'clients': 'Clien?i',
+            'appointments': 'Program?ri',
+            'notifications': 'Notific?ri',
+            'admin': 'Administrare',
+            'account': 'Cont',
+            'test': 'Teste',
+            'create': 'Creare',
+            'edit': 'Editare',
+            'details': 'Detalii',
+            'dashboard': 'Dashboard',
+            'calendar': 'Calendar',
+            'users': 'Utilizatori',
+            'systeminfo': 'Info Sistem'
+        };
+        
+        return displayNames[segment.toLowerCase()] || segment.charAt(0).toUpperCase() + segment.slice(1);
+    }
+    
+    function addKeyboardShortcuts() {
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey) {
+                switch(e.key) {
+                    case 'h':
+                        e.preventDefault();
+                        window.location.href = '/';
+                        break;
+                    case 'c':
+                        e.preventDefault();
+                        window.location.href = '/Clients';
+                        break;
+                    case 'a':
+                        e.preventDefault();
+                        window.location.href = '/Appointments';
+                        break;
+                    case 'n':
+                        e.preventDefault();
+                        window.location.href = '/Notifications';
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        window.history.back();
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        window.history.forward();
+                        break;
+                }
+            }
+        });
+    }
+</script>

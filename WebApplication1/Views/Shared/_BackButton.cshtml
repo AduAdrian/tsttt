@@ -1,0 +1,172 @@
+@* Enhanced Back Button Component *@
+@{
+    var backUrl = ViewBag.BackUrl as string ?? Url.Action("Index", "Clients");
+    var backText = ViewBag.BackText as string ?? "Înapoi la Clien?i";
+    var showBreadcrumb = ViewBag.ShowBreadcrumb as bool? ?? true;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 back-button-header">
+    <!-- Back Button -->
+    <button type="button" class="btn btn-outline-secondary back-btn" onclick="smartGoBack('@backUrl')">
+        <i class="fas fa-arrow-left"></i> @backText
+    </button>
+    
+    <!-- Breadcrumb Navigation -->
+    @if (showBreadcrumb)
+    {
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0" id="dynamicBreadcrumb">
+                <!-- Breadcrumbs will be populated by JavaScript or ViewBag -->
+            </ol>
+        </nav>
+    }
+</div>
+
+<style>
+    .back-button-header {
+        position: sticky;
+        top: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 100;
+        padding: 0.5rem 0;
+        margin: -0.5rem 0 1rem 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .back-btn {
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+    
+    .back-btn:hover {
+        transform: translateX(-3px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+    }
+    
+    .breadcrumb-item a {
+        color: #6c757d;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    
+    .breadcrumb-item a:hover {
+        color: #0d6efd;
+    }
+    
+    .breadcrumb-item.active {
+        color: #495057;
+        font-weight: 500;
+    }
+</style>
+
+<script>
+    // Smart back button functionality
+    function smartGoBack(fallbackUrl) {
+        // Check if there's history to go back to and it's within our application
+        if (window.history.length > 1 && document.referrer && 
+            document.referrer.indexOf(window.location.origin) === 0) {
+            
+            // Check if the referrer is not the same page
+            if (document.referrer !== window.location.href) {
+                window.history.back();
+                return;
+            }
+        }
+        
+        // Fallback to provided URL
+        window.location.href = fallbackUrl;
+    }
+    
+    // Generate breadcrumbs based on current URL
+    function generateBreadcrumbs() {
+        const breadcrumb = document.getElementById('dynamicBreadcrumb');
+        if (!breadcrumb) return;
+        
+        const path = window.location.pathname;
+        const segments = path.split('/').filter(s => s);
+        
+        // Clear existing
+        breadcrumb.innerHTML = '';
+        
+        // Add home
+        const homeItem = document.createElement('li');
+        homeItem.className = 'breadcrumb-item';
+        homeItem.innerHTML = '<a href="/"><i class="fas fa-home"></i> Acas?</a>';
+        breadcrumb.appendChild(homeItem);
+        
+        // Build breadcrumb based on segments
+        let currentPath = '';
+        segments.forEach((segment, index) => {
+            currentPath += '/' + segment;
+            const item = document.createElement('li');
+            item.className = 'breadcrumb-item';
+            
+            const displayName = getBreadcrumbName(segment, segments, index);
+            
+            if (index === segments.length - 1) {
+                item.className += ' active';
+                item.setAttribute('aria-current', 'page');
+                item.textContent = displayName;
+            } else {
+                item.innerHTML = `<a href="${currentPath}">${displayName}</a>`;
+            }
+            
+            breadcrumb.appendChild(item);
+        });
+    }
+    
+    function getBreadcrumbName(segment, segments, index) {
+        const names = {
+            'clients': 'Clien?i',
+            'appointments': 'Program?ri', 
+            'notifications': 'Notific?ri',
+            'admin': 'Administrare',
+            'account': 'Cont',
+            'test': 'Teste',
+            'create': 'Adaug?',
+            'edit': 'Editeaz?',
+            'details': 'Detalii',
+            'dashboard': 'Dashboard',
+            'calendar': 'Calendar',
+            'users': 'Utilizatori',
+            'systeminfo': 'Info Sistem'
+        };
+        
+        // Check if it's an ID (numeric)
+        if (!isNaN(segment) && index > 0) {
+            // Try to get the name from previous context
+            const prevSegment = segments[index - 1];
+            if (prevSegment === 'clients') {
+                // Try to get registration number from page context
+                const regNumber = document.querySelector('.badge:contains("@")')?.textContent;
+                return regNumber || `Client #${segment}`;
+            }
+            return `#${segment}`;
+        }
+        
+        return names[segment.toLowerCase()] || 
+               segment.charAt(0).toUpperCase() + segment.slice(1);
+    }
+    
+    // Global keyboard shortcut for back button
+    document.addEventListener('keydown', function(e) {
+        if (e.altKey && e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const backBtn = document.querySelector('.back-btn');
+            if (backBtn) {
+                backBtn.click();
+            }
+        }
+    });
+    
+    // Initialize breadcrumbs when component loads
+    document.addEventListener('DOMContentLoaded', function() {
+        generateBreadcrumbs();
+    });
+</script>

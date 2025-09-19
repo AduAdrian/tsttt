@@ -1,0 +1,194 @@
+@model CreateAppointmentViewModel
+@{
+    ViewData["Title"] = "Programare nou?";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">@ViewData["Title"]</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Înapoi la list?
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">Detalii programare</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label asp-for="Title" class="form-label"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Ex: Consulta?ie ini?ial?, Revizie tehnic?, etc.">
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Descriere detaliat? a program?rii..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="AppointmentDate" class="form-label"></label>
+                            <input asp-for="AppointmentDate" type="datetime-local" class="form-control">
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="DurationMinutes" class="form-label"></label>
+                            <select asp-for="DurationMinutes" class="form-select">
+                                <option value="15">15 minute</option>
+                                <option value="30">30 minute</option>
+                                <option value="45">45 minute</option>
+                                <option value="60" selected>1 or?</option>
+                                <option value="90">1.5 ore</option>
+                                <option value="120">2 ore</option>
+                                <option value="180">3 ore</option>
+                                <option value="240">4 ore</option>
+                            </select>
+                            <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" class="form-select">
+                                @foreach (AppointmentStatus status in Enum.GetValues<AppointmentStatus>())
+                                {
+                                    <option value="@status">@status.GetDisplayName()</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="mb-3">Informa?ii client</h6>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="ClientName" class="form-label"></label>
+                            <input asp-for="ClientName" class="form-control" placeholder="Numele complet al clientului">
+                            <span asp-validation-for="ClientName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ClientPhone" class="form-label"></label>
+                            <input asp-for="ClientPhone" type="tel" class="form-control" placeholder="+40 xxx xxx xxx">
+                            <span asp-validation-for="ClientPhone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="ClientEmail" class="form-label"></label>
+                            <input asp-for="ClientEmail" type="email" class="form-control" placeholder="client@example.com">
+                            <span asp-validation-for="ClientEmail" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Location" class="form-label"></label>
+                            <input asp-for="Location" class="form-control" placeholder="Adresa sau loca?ia program?rii">
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Note suplimentare..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Index" class="btn btn-secondary me-md-2">Anuleaz?</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Salveaz? programarea
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-info">Informa?ii utile</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6><i class="fas fa-info-circle text-info"></i> Sfaturi</h6>
+                    <ul class="small text-muted">
+                        <li>Verific? disponibilitatea înainte de programare</li>
+                        <li>Adaug? toate informa?iile de contact ale clientului</li>
+                        <li>Specific? loca?ia exact? în câmpul dedicat</li>
+                        <li>Adaug? note importante pentru programare</li>
+                    </ul>
+                </div>
+
+                <div class="mb-3">
+                    <h6><i class="fas fa-clock text-warning"></i> Durata program?rii</h6>
+                    <p class="small text-muted">
+                        Selecteaz? durata estimat? pentru aceast? programare. Aceasta va ajuta la evitarea conflictelor de programare.
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <h6><i class="fas fa-exclamation-triangle text-danger"></i> Conflicte</h6>
+                    <p class="small text-muted">
+                        Sistemul va verifica automat dac? exist? conflicte cu alte program?ri în acela?i interval de timp.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick time slots -->
+        <div class="card shadow mt-3">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-success">Intervale rapide</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-2">Selecteaz? rapid un interval pentru ast?zi:</p>
+                <div class="d-grid gap-1">
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="setDateTime(9, 0)">09:00</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="setDateTime(10, 0)">10:00</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="setDateTime(11, 0)">11:00</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="setDateTime(14, 0)">14:00</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="setDateTime(15, 0)">15:00</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="setDateTime(16, 0)">16:00</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function setDateTime(hour, minute) {
+            const now = new Date();
+            now.setHours(hour, minute, 0, 0);
+            
+            const dateTimeInput = document.getElementById('AppointmentDate');
+            const isoString = now.toISOString().slice(0, 16);
+            dateTimeInput.value = isoString;
+        }
+
+        // Set minimum date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateTimeInput = document.getElementById('AppointmentDate');
+            const now = new Date();
+            const minDateTime = now.toISOString().slice(0, 16);
+            dateTimeInput.setAttribute('min', minDateTime);
+        });
+    </script>
+}

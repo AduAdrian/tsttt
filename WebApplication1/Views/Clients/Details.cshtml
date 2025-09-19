@@ -1,0 +1,280 @@
+@model WebApplication1.Models.ClientDetailsViewModel
+
+@{
+    ViewData["Title"] = "Detalii Client";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- Enhanced Back Button Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Înapoi la Clien?i
+            </a>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Acas?</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Clients")">Clien?i</a></li>
+                    <li class="breadcrumb-item active">@Model.RegistrationNumber</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-user"></i> Detalii Client: <span class="badge bg-primary">@Model.RegistrationNumber</span>
+                </h4>
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Editeaz?
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i> Înapoi
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-5">
+                                <i class="fas fa-car"></i> @Html.DisplayNameFor(model => model.RegistrationNumber)
+                            </dt>
+                            <dd class="col-sm-7">
+                                <strong class="badge bg-dark fs-6">@Model.RegistrationNumber</strong>
+                            </dd>
+
+                            <dt class="col-sm-5">
+                                <i class="fas fa-calendar-alt"></i> @Html.DisplayNameFor(model => model.ValidityType)
+                            </dt>
+                            <dd class="col-sm-7">
+                                <span class="badge bg-info">@Model.ValidityType.GetDisplayName()</span>
+                            </dd>
+
+                            <dt class="col-sm-5">
+                                <i class="fas fa-calendar-check"></i> @Html.DisplayNameFor(model => model.ExpiryDate)
+                            </dt>
+                            <dd class="col-sm-7">
+                                <strong>@Model.ExpiryDate.ToString("dd/MM/yyyy")</strong>
+                                <br><small class="text-muted">@Model.ExpiryDate.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("ro-RO"))</small>
+                            </dd>
+
+                            <dt class="col-sm-5">
+                                <i class="fas fa-phone"></i> @Html.DisplayNameFor(model => model.PhoneNumber)
+                            </dt>
+                            <dd class="col-sm-7">
+                                @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                                {
+                                    <a href="tel:@Model.PhoneNumber" class="text-decoration-none">
+                                        <i class="fas fa-phone-alt text-success"></i> @Model.PhoneNumber
+                                    </a>
+                                    @if (Model.IsEligibleForNotification)
+                                    {
+                                        <br><small class="text-success">? Eligibil pentru SMS</small>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Nu este setat</span>
+                                    <br><small class="text-warning">? F?r? SMS</small>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-5">
+                                <i class="fas fa-info-circle"></i> Status
+                            </dt>
+                            <dd class="col-sm-7">
+                                @if (Model.IsExpired)
+                                {
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-exclamation-triangle"></i> Expirat
+                                    </span>
+                                }
+                                else if (Model.IsExpiringSoon)
+                                {
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-clock"></i> Expir? curând
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Valid
+                                    </span>
+                                }
+                                
+                                @if (!Model.IsActive)
+                                {
+                                    <span class="badge bg-secondary ms-2">Inactiv</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-5">
+                                <i class="fas fa-hourglass-half"></i> Zile R?mase
+                            </dt>
+                            <dd class="col-sm-7">
+                                @if (Model.DaysUntilExpiry < 0)
+                                {
+                                    <span class="text-danger">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <strong>@Math.Abs(Model.DaysUntilExpiry)</strong> zile întârziere
+                                    </span>
+                                }
+                                else if (Model.DaysUntilExpiry == 0)
+                                {
+                                    <span class="text-warning">
+                                        <i class="fas fa-clock"></i>
+                                        <strong>Expir? azi</strong>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="@(Model.IsExpiringSoon ? "text-warning" : "text-success")">
+                                        <i class="fas fa-calendar"></i>
+                                        <strong>@Model.DaysUntilExpiry</strong> zile
+                                    </span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-5">
+                                <i class="fas fa-calendar-plus"></i> @Html.DisplayNameFor(model => model.CreatedAt)
+                            </dt>
+                            <dd class="col-sm-7">
+                                @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                @if (!string.IsNullOrEmpty(Model.CreatedByUserName))
+                                {
+                                    <br><small class="text-muted">de @Model.CreatedByUserName</small>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Status Alert -->
+                @if (Model.IsExpired)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle"></i> ITP Expirat!
+                        </h6>
+                        <p class="mb-0">
+                            ITP-ul pentru vehiculul <strong>@Model.RegistrationNumber</strong> a expirat cu <strong>@Math.Abs(Model.DaysUntilExpiry)</strong> zile în urm?.
+                            <br>Este necesar s? se efectueze o nou? inspec?ie tehnic?.
+                        </p>
+                    </div>
+                }
+                else if (Model.IsExpiringSoon)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-clock"></i> ITP Expir? Curând!
+                        </h6>
+                        <p class="mb-0">
+                            ITP-ul pentru vehiculul <strong>@Model.RegistrationNumber</strong> va expira în <strong>@Model.DaysUntilExpiry</strong> zile.
+                            <br>Programeaz? o nou? inspec?ie tehnic? în timpul scurt.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-success" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-check-circle"></i> ITP Valid
+                        </h6>
+                        <p class="mb-0">
+                            ITP-ul pentru vehiculul <strong>@Model.RegistrationNumber</strong> este valid pentru înc? <strong>@Model.DaysUntilExpiry</strong> zile.
+                        </p>
+                    </div>
+                }
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">
+                            <i class="fas fa-arrow-left"></i> Înapoi
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-list"></i> Lista Clien?i
+                        </a>
+                    </div>
+                    <div class="btn-group">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Editeaz?
+                        </a>
+                        @if (Model.IsEligibleForNotification)
+                        {
+                            <button type="button" class="btn btn-success" onclick="sendTestNotification(@Model.Id)">
+                                <i class="fas fa-sms"></i> Test SMS
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Enhanced back button functionality
+        function goBack() {
+            // Check if there's history to go back to
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Fallback to clients index
+                window.location.href = '@Url.Action("Index", "Clients")';
+            }
+        }
+
+        // Test SMS notification function
+        function sendTestNotification(clientId) {
+            if (confirm('Trimite un SMS de test pentru acest client?')) {
+                // This would typically call a controller action to send test SMS
+                fetch(`/Test/SendTestSms?clientId=${clientId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('SMS de test trimis cu succes!');
+                    } else {
+                        alert('Eroare la trimiterea SMS-ului de test.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Eroare la trimiterea SMS-ului de test.');
+                });
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey && e.key === 'ArrowLeft') {
+                e.preventDefault();
+                goBack();
+            }
+            if (e.key === 'e' && e.ctrlKey) {
+                e.preventDefault();
+                window.location.href = '@Url.Action("Edit", "Clients", new { id = Model.Id })';
+            }
+        });
+
+        // Add visual feedback for keyboard shortcuts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add tooltip for keyboard shortcuts
+            const editButton = document.querySelector('a[href*="Edit"]');
+            if (editButton) {
+                editButton.title = 'Editeaz? (Ctrl+E)';
+            }
+        });
+    </script>
+}

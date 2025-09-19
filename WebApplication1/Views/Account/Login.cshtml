@@ -4,6 +4,8 @@
 }
 
 <div class="main-header">
+    @await Html.PartialAsync("_SimpleNavigation")
+    
     <div class="company-name">
         Miseda Inspect SRL
     </div>
@@ -107,6 +109,15 @@
                     <div class="text-center mt-2">
                         <span>Nu ai cont? </span>
                         <a href="/Account/Register" class="text-decoration-none">Creaza cont</a>
+                    </div>
+
+                    <!-- Link pentru initializare admin -->
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <a href="@Url.Action("InitializeAdmin", "Admin")" class="text-decoration-none">
+                                <i class="fas fa-user-shield"></i> Initializare Administrator
+                            </a>
+                        </small>
                     </div>
                 </div>
             </div>

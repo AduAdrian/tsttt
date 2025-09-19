@@ -6,6 +6,13 @@ namespace WebApplication1.Models
         public int ConfirmedUsers { get; set; }
         public int UnconfirmedUsers { get; set; }
         public List<ApplicationUser> RecentUsers { get; set; } = new();
+        
+        // Appointment statistics
+        public int TotalAppointments { get; set; }
+        public int TodayAppointments { get; set; }
+        public int UpcomingAppointments { get; set; }
+        public int CompletedAppointments { get; set; }
+        public List<Appointment> RecentAppointments { get; set; } = new();
     }
 
     public class UserViewModel
@@ -24,5 +31,6 @@ namespace WebApplication1.Models
         public int ProcessorCount { get; set; }
         public long WorkingSet { get; set; }
         public int TotalUsers { get; set; }
+        public int TotalAppointments { get; set; }
     }
 }

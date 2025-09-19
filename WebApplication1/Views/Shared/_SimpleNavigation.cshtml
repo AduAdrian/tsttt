@@ -1,0 +1,49 @@
+@{
+    bool showAdminLink = false;
+    
+    // Check if current user is admin (only if authenticated)
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        // We can't easily inject UserManager here without making it complex,
+        // so we'll use the simple role check
+        showAdminLink = User.IsInRole("Admin");
+    }
+}
+
+<div class="login-nav">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <span class="user-info">Buna, @User.Identity.Name!</span>
+        
+        <a href="@Url.Action("Index", "Home")" class="btn btn-sm btn-outline-light">
+            <i class="fas fa-home"></i> Acasa
+        </a>
+        
+        <a href="@Url.Action("Index", "Appointments")" class="btn btn-sm btn-outline-light">
+            <i class="fas fa-calendar-alt"></i> Program?ri
+        </a>
+        
+        <a href="@Url.Action("Index", "Clients")" class="btn btn-sm btn-outline-light">
+            <i class="fas fa-users"></i> Clien?i
+        </a>
+        
+        @if (showAdminLink)
+        {
+            <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-sm btn-cpanel">
+                <i class="fas fa-cogs"></i> Control Panel
+            </a>
+        }
+        
+        <form method="post" action="/Account/Logout" style="display: inline;">
+            <button type="submit" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-sign-out-alt"></i> Deconectare
+            </button>
+        </form>
+    }
+    else
+    {
+        <a href="/Account/Login">
+            <i class="fas fa-sign-in-alt"></i> Conectare
+        </a>
+    }
+</div>

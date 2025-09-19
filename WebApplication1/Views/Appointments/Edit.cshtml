@@ -1,0 +1,192 @@
+@model EditAppointmentViewModel
+@{
+    ViewData["Title"] = "Editeaz? programare";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">@ViewData["Title"]</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-eye"></i> Vezi detalii
+            </a>
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Înapoi la list?
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">Modific? programarea</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    <input asp-for="Id" type="hidden" />
+                    <input asp-for="CreatedAt" type="hidden" />
+                    <input asp-for="UpdatedAt" type="hidden" />
+                    
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label asp-for="Title" class="form-label"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Ex: Consulta?ie ini?ial?, Revizie tehnic?, etc.">
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Descriere detaliat? a program?rii..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="AppointmentDate" class="form-label"></label>
+                            <input asp-for="AppointmentDate" type="datetime-local" class="form-control">
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="DurationMinutes" class="form-label"></label>
+                            <select asp-for="DurationMinutes" class="form-select">
+                                <option value="15">15 minute</option>
+                                <option value="30">30 minute</option>
+                                <option value="45">45 minute</option>
+                                <option value="60">1 or?</option>
+                                <option value="90">1.5 ore</option>
+                                <option value="120">2 ore</option>
+                                <option value="180">3 ore</option>
+                                <option value="240">4 ore</option>
+                            </select>
+                            <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="Status" class="form-label"></label>
+                            <select asp-for="Status" class="form-select">
+                                @foreach (AppointmentStatus status in Enum.GetValues<AppointmentStatus>())
+                                {
+                                    <option value="@status" selected="@(Model.Status == status)">@status.GetDisplayName()</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="mb-3">Informa?ii client</h6>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="ClientName" class="form-label"></label>
+                            <input asp-for="ClientName" class="form-control" placeholder="Numele complet al clientului">
+                            <span asp-validation-for="ClientName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ClientPhone" class="form-label"></label>
+                            <input asp-for="ClientPhone" type="tel" class="form-control" placeholder="+40 xxx xxx xxx">
+                            <span asp-validation-for="ClientPhone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="ClientEmail" class="form-label"></label>
+                            <input asp-for="ClientEmail" type="email" class="form-control" placeholder="client@example.com">
+                            <span asp-validation-for="ClientEmail" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Location" class="form-label"></label>
+                            <input asp-for="Location" class="form-control" placeholder="Adresa sau loca?ia program?rii">
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Note suplimentare..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary me-md-2">Anuleaz?</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Salveaz? modific?rile
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-info">Informa?ii programare</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6><i class="fas fa-info-circle text-info"></i> Detalii</h6>
+                    <ul class="small text-muted">
+                        <li><strong>Creat? la:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</li>
+                        @if (Model.UpdatedAt.HasValue)
+                        {
+                            <li><strong>Ultima modificare:</strong> @Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")</li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="mb-3">
+                    <h6><i class="fas fa-exclamation-triangle text-warning"></i> Aten?ie</h6>
+                    <p class="small text-muted">
+                        Modific?rile vor fi verificate pentru conflicte cu alte program?ri în acela?i interval de timp.
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <h6><i class="fas fa-clock text-info"></i> Status programare</h6>
+                    <p class="small text-muted">
+                        Po?i modifica statusul program?rii pentru a o gestiona mai u?or.
+                    </p>
+                </div>
+
+                <!-- Quick actions -->
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-success" onclick="setStatus(@((int)AppointmentStatus.Confirmed))">
+                        <i class="fas fa-check"></i> Marcheaz? ca Confirmat?
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-info" onclick="setStatus(@((int)AppointmentStatus.InProgress))">
+                        <i class="fas fa-play"></i> Marcheaz? ca În Desf??urare
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="setStatus(@((int)AppointmentStatus.Completed))">
+                        <i class="fas fa-check-circle"></i> Marcheaz? ca Finalizat?
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function setStatus(statusValue) {
+            document.getElementById('Status').value = statusValue;
+        }
+
+        // Set minimum date to today for past appointments adjustment
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateTimeInput = document.getElementById('AppointmentDate');
+            // Don't restrict past appointments in edit mode, allow flexibility
+        });
+    </script>
+}

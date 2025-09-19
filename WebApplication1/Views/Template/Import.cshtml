@@ -1,0 +1,338 @@
+@{
+    ViewData["Title"] = "Import Date din Excel";
+    ViewData["UseMainNavigation"] = "true";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-upload"></i> Import Clien?i din Excel
+                    </h4>
+                    <p class="mb-0 mt-2 small">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        Aten?ie: Importul va ÎNLOCUI complet baza de date existent?!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mesaje de alert? -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i>
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["WarningMessage"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    @TempData["WarningMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-times-circle"></i>
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- Formularul de import -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form asp-controller="Template" asp-action="Import" method="post" enctype="multipart/form-data" id="importForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-4">
+                                    <label for="excelFile" class="form-label fw-bold">
+                                        <i class="fas fa-file-excel text-success"></i> 
+                                        Selecteaz? fi?ierul Excel
+                                    </label>
+                                    <input type="file" 
+                                           class="form-control form-control-lg" 
+                                           id="excelFile" 
+                                           name="excelFile" 
+                                           accept=".xlsx,.xls"
+                                           required>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle"></i>
+                                        Fi?iere acceptate: .xlsx, .xls (maxim 10MB)
+                                    </div>
+                                </div>
+
+                                <!-- Progres bar -->
+                                <div class="progress mb-3" id="uploadProgress" style="display: none;">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                         role="progressbar" 
+                                         style="width: 0%">
+                                        <span id="progressText">0%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Butoane -->
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="importButton">
+                                        <i class="fas fa-upload"></i> 
+                                        Import? Date Excel
+                                    </button>
+                                    
+                                    <div class="btn-group">
+                                        <a href="@Url.Action("DownloadSmartTemplate", "Template")" 
+                                           class="btn btn-success">
+                                            <i class="fas fa-download"></i> 
+                                            Descarc? Template
+                                        </a>
+                                        <a href="@Url.Action("PreviewTemplate", "Template")" 
+                                           class="btn btn-info">
+                                            <i class="fas fa-eye"></i> 
+                                            Preview
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Informa?ii importante -->
+            <div class="card mt-4 border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        Informa?ii Importante
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-danger">?? Ce Face Importul:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-trash text-danger"></i> ?terge TO?I clien?ii existen?i</li>
+                                <li><i class="fas fa-trash text-danger"></i> ?terge TOATE notific?rile</li>
+                                <li><i class="fas fa-plus text-success"></i> Adaug? doar clien?ii din Excel</li>
+                                <li><i class="fas fa-database text-info"></i> Baza de date = 100% Excel</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">?? Cerin?e Template:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success"></i> Sheet "Date Clien?i"</li>
+                                <li><i class="fas fa-check text-success"></i> Coloane: A=Nr.Înmat., B=Telefon, C=Tip</li>
+                                <li><i class="fas fa-check text-success"></i> Format: .xlsx sau .xls</li>
+                                <li><i class="fas fa-check text-success"></i> Maxim 500 clien?i</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rezultatele importului (dac? exist?) -->
+            @if (ViewBag.ImportResult != null)
+            {
+                var result = ViewBag.ImportResult as WebApplication1.Services.ImportResult;
+                
+                <div class="card mt-4">
+                    <div class="card-header @(result.Success ? "bg-success" : "bg-danger") text-white">
+                        <h5 class="mb-0">
+                            <i class="fas @(result.Success ? "fa-check-circle" : "fa-times-circle")"></i>
+                            Rezultatele Importului
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="h4 text-primary">@result.TotalProcessed</div>
+                                    <small>Total Procesate</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="h4 text-success">@result.SuccessfulImports</div>
+                                    <small>Importuri Reu?ite</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="h4 text-danger">@result.Errors</div>
+                                    <small>Erori</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="h4 text-info">@(result.TotalProcessed > 0 ? Math.Round((double)result.SuccessfulImports / result.TotalProcessed * 100, 1) : 0)%</div>
+                                    <small>Rata Succes</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        @if (result.ErrorMessages?.Any() == true)
+                        {
+                            <hr>
+                            <h6 class="text-danger">
+                                <i class="fas fa-exclamation-circle"></i> 
+                                Erori Detaliate:
+                            </h6>
+                            <div class="alert alert-danger">
+                                @foreach (var error in result.ErrorMessages.Take(10))
+                                {
+                                    <div>• @error</div>
+                                }
+                                @if (result.ErrorMessages.Count > 10)
+                                {
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            ... ?i înc? @(result.ErrorMessages.Count - 10) erori
+                                        </small>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Linkuri utile -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6>
+                        <i class="fas fa-links"></i> 
+                        Linkuri Utile
+                    </h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("Index", "Clients")" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-users"></i> Vezi Clien?ii
+                        </a>
+                        <a href="@Url.Action("DownloadSmartTemplate", "Template")" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-download"></i> Descarc? Template Nou
+                        </a>
+                        <a href="@Url.Action("DownloadInstructionsGuide", "Template")" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-book"></i> Ghid Utilizare
+                        </a>
+                        <a href="@Url.Action("PreviewTemplate", "Template")" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-eye"></i> Preview Template
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('importForm');
+            const fileInput = document.getElementById('excelFile');
+            const importButton = document.getElementById('importButton');
+            const progressBar = document.getElementById('uploadProgress');
+            const progressBarInner = progressBar.querySelector('.progress-bar');
+            const progressText = document.getElementById('progressText');
+
+            // Validare fi?ier la selec?ie
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    // Verific? extensia
+                    const validExtensions = ['.xlsx', '.xls'];
+                    const extension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+                    
+                    if (!validExtensions.includes(extension)) {
+                        alert('Fi?ierul trebuie s? fie de tip Excel (.xlsx sau .xls)');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    // Verific? dimensiunea (10MB)
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert('Fi?ierul este prea mare. Dimensiunea maxim? permis? este 10MB.');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    // Afi?eaz? informa?ii despre fi?ier
+                    const sizeInMB = (file.size / 1024 / 1024).toFixed(2);
+                    console.log(`Fi?ier selectat: ${file.name} (${sizeInMB} MB)`);
+                }
+            });
+
+            // Gestionare submit cu progres
+            form.addEventListener('submit', function() {
+                const file = fileInput.files[0];
+                
+                if (!file) {
+                    alert('V? rug?m s? selecta?i un fi?ier Excel.');
+                    return false;
+                }
+
+                // Confirm? importul
+                const confirmation = confirm(
+                    '?? ATEN?IE: Importul va ?TERGE to?i clien?ii existen?i ?i îi va ÎNLOCUI cu datele din Excel.\n\n' +
+                    'Aceast? ac?iune NU poate fi anulat?!\n\n' +
+                    'Continua?i?'
+                );
+
+                if (!confirmation) {
+                    return false;
+                }
+
+                // Afi?eaz? progres
+                importButton.disabled = true;
+                importButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Se proceseaz?...';
+                progressBar.style.display = 'block';
+
+                // Simuleaz? progres (nu putem avea progres real pentru upload-ul form)
+                let progress = 0;
+                const interval = setInterval(function() {
+                    progress += Math.random() * 15;
+                    if (progress > 90) progress = 90;
+                    
+                    progressBarInner.style.width = progress + '%';
+                    progressText.textContent = Math.round(progress) + '%';
+                }, 500);
+
+                // Cleanup la finalizare (se va întâmpla când pagina se reîncarc?)
+                setTimeout(() => {
+                    clearInterval(interval);
+                }, 30000); // Cleanup dup? 30 secunde max
+            });
+
+            // Drag & Drop support
+            const dropZone = document.querySelector('.card-body');
+            
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.backgroundColor = '#f8f9fa';
+            });
+            
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.backgroundColor = '';
+            });
+            
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.backgroundColor = '';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    fileInput.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+    </script>
+}

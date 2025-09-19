@@ -53,7 +53,7 @@
             right: 1rem;
         }
         
-        .login-nav a {
+        .login-nav a, .login-nav .btn {
             color: white;
             text-decoration: none;
             background: rgba(255, 255, 255, 0.2);
@@ -62,11 +62,51 @@
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
+            margin-left: 0.5rem;
+            display: inline-block;
         }
         
-        .login-nav a:hover {
+        .login-nav a:hover, .login-nav .btn:hover {
             background: rgba(255, 255, 255, 0.3);
             color: white;
+        }
+
+        .login-nav .btn-cpanel {
+            background: rgba(255, 193, 7, 0.3);
+            border-color: rgba(255, 193, 7, 0.5);
+            color: white;
+        }
+
+        .login-nav .btn-cpanel:hover {
+            background: rgba(255, 193, 7, 0.5);
+            color: white;
+        }
+
+        .login-nav .user-info {
+            color: white;
+            margin-right: 10px;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .top-nav {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            right: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
         }
 
         /* Password toggle button styles */
@@ -123,14 +163,257 @@
                 transform: translateY(0);
             }
         }
+
+        /* Make space for fixed navigation */
+        body.with-nav {
+            padding-top: 70px;
+        }
+
+        /* Navigation adjustments */
+        .main-header.with-nav {
+            margin-top: 1rem;
+        }
+
+        /* Retry indicator styles */
+        .retry-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: rgba(0, 123, 255, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .retry-indicator.error {
+            background: rgba(220, 53, 69, 0.9);
+        }
+
+        .retry-indicator.success {
+            background: rgba(40, 167, 69, 0.9);
+        }
+
+        /* Connection status indicator */
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9998;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .connection-status.online {
+            background: rgba(40, 167, 69, 0.8);
+            color: white;
+        }
+
+        .connection-status.offline {
+            background: rgba(220, 53, 69, 0.8);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
-<body>
+<body class="@(ViewData["UseMainNavigation"]?.ToString() == "true" ? "with-nav" : "")">
+    @if (ViewData["UseMainNavigation"]?.ToString() == "true")
+    {
+        @await Html.PartialAsync("_MainNavigation")
+    }
+    
     <div class="container">
         @RenderBody()
     </div>
 
+    <!-- Connection Status Indicator -->
+    <div id="connectionStatus" class="connection-status online" style="display: none;">
+        <i class="fas fa-wifi"></i> Online
+    </div>
+
+    <!-- Quick Navigation Shortcut Indicator -->
+    <div id="shortcutIndicator" class="position-fixed bottom-0 end-0 m-3" style="display: none;">
+        <div class="toast show" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-keyboard text-primary me-2"></i>
+                <strong class="me-auto">Scurt?tur? Activat?</strong>
+                <button type="button" class="btn-close" onclick="hideShortcutIndicator()"></button>
+            </div>
+            <div class="toast-body" id="shortcutText">
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Enhanced command execution with retry logic -->
+    <script src="~/js/command-executor.js"></script>
+    <script src="~/js/client-command-manager.js"></script>
+    <script src="~/js/back-button.js"></script>
+    
+    <script>
+        // Enhanced connection monitoring
+        function updateConnectionStatus() {
+            const statusIndicator = document.getElementById('connectionStatus');
+            
+            if (navigator.onLine) {
+                statusIndicator.className = 'connection-status online';
+                statusIndicator.innerHTML = '<i class="fas fa-wifi"></i> Online';
+                statusIndicator.style.display = 'block';
+                
+                // Hide after 3 seconds if online
+                setTimeout(() => {
+                    if (navigator.onLine) {
+                        statusIndicator.style.display = 'none';
+                    }
+                }, 3000);
+            } else {
+                statusIndicator.className = 'connection-status offline';
+                statusIndicator.innerHTML = '<i class="fas fa-wifi-slash"></i> Offline';
+                statusIndicator.style.display = 'block';
+            }
+        }
+
+        // Monitor connection status
+        window.addEventListener('online', function() {
+            console.log('?? Conexiunea a fost restabilit?');
+            updateConnectionStatus();
+        });
+
+        window.addEventListener('offline', function() {
+            console.log('?? Conexiunea a fost pierdut?');
+            updateConnectionStatus();
+        });
+
+        // Global keyboard shortcuts (enhanced with retry)
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey) {
+                let shortcutText = '';
+                let handled = false;
+                
+                switch(e.key) {
+                    case 'h':
+                        navigateSafely('/');
+                        shortcutText = 'Navigare la Acas? (Alt+H)';
+                        handled = true;
+                        break;
+                    case 't':
+                        navigateSafely('/Test/NavigationTest');
+                        shortcutText = 'Deschidere Test Navigare (Alt+T)';
+                        handled = true;
+                        break;
+                    case 'c':
+                        navigateSafely('/Clients');
+                        shortcutText = 'Navigare la Clien?i (Alt+C)';
+                        handled = true;
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        window.location.reload();
+                        shortcutText = 'Reînc?rcare Pagin? (Alt+R)';
+                        handled = true;
+                        break;
+                    // Note: Alt+Left and Alt+Right are handled by BackButtonManager
+                }
+                
+                if (handled) {
+                    e.preventDefault();
+                    showShortcutIndicator(shortcutText);
+                }
+            }
+        });
+        
+        function showShortcutIndicator(text) {
+            const indicator = document.getElementById('shortcutIndicator');
+            const textElement = document.getElementById('shortcutText');
+            
+            textElement.textContent = text;
+            indicator.style.display = 'block';
+            
+            setTimeout(() => {
+                hideShortcutIndicator();
+            }, 3000);
+        }
+        
+        function hideShortcutIndicator() {
+            document.getElementById('shortcutIndicator').style.display = 'none';
+        }
+        
+        // Enhanced page load tracking with retry logic
+        let navigationStart = performance.now();
+        let pageLoadAttempt = 1;
+        const maxLoadAttempts = 3;
+        
+        window.addEventListener('load', function() {
+            let loadTime = performance.now() - navigationStart;
+            console.log(`? Pagina înc?rcat? în ${Math.round(loadTime)}ms (încercarea ${pageLoadAttempt})`);
+            pageLoadAttempt = 1; // Reset counter
+            
+            // Initialize connection status
+            updateConnectionStatus();
+        });
+
+        // Enhanced error handling with retry
+        window.addEventListener('error', function(event) {
+            console.error('? Eroare JavaScript:', event.error);
+            
+            if (pageLoadAttempt < maxLoadAttempts) {
+                pageLoadAttempt++;
+                console.warn(`?? Reîncercare pagin? (${pageLoadAttempt}/${maxLoadAttempts}) în 2 secunde...`);
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                console.error('? Pagina nu s-a putut înc?rca dup? mai multe încerc?ri');
+                if (window.CommandExecutor) {
+                    window.CommandExecutor.showErrorMessage('Pagina întâmpin? probleme. V? rug?m s? reînc?rca?i manual sau s? contacta?i suportul.');
+                }
+            }
+        });
+
+        // Enhanced resource loading with retry
+        window.addEventListener('error', function(event) {
+            if (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK') {
+                console.warn('?? Resursa nu s-a înc?rcat:', event.target.src || event.target.href);
+                
+                // Attempt to reload resource
+                setTimeout(() => {
+                    try {
+                        if (event.target.tagName === 'SCRIPT') {
+                            const newScript = document.createElement('script');
+                            newScript.src = event.target.src;
+                            newScript.async = true;
+                            newScript.onerror = () => console.error('? Nu s-a putut reînc?rca script-ul:', newScript.src);
+                            document.head.appendChild(newScript);
+                        } else if (event.target.tagName === 'LINK') {
+                            const newLink = document.createElement('link');
+                            newLink.href = event.target.href;
+                            newLink.rel = 'stylesheet';
+                            newLink.onerror = () => console.error('? Nu s-a putut reînc?rca CSS-ul:', newLink.href);
+                            document.head.appendChild(newLink);
+                        }
+                    } catch (error) {
+                        console.error('? Eroare la reînc?rcarea resursei:', error);
+                    }
+                }, 1000);
+            }
+        }, true);
+
+        console.log('? Enhanced retry system initialized');
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

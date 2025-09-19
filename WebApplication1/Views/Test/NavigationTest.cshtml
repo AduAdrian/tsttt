@@ -1,0 +1,538 @@
+@{
+    ViewData["Title"] = "Test Navigare";
+    ViewData["Subtitle"] = "Pagin? de testare complet? pentru sistemul de navigare ?i leg?turi";
+    Layout = "_NavigationLayout";
+}
+
+<!-- Navigation Menu -->
+<div class="container-fluid bg-light p-3 mb-4 rounded">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="company-name mb-0">
+                <i class="fas fa-vial"></i> Test Navigare
+            </h1>
+            <p class="subtitle mb-0">Pagin? de testare pentru sistemul de navigare</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <button type="button" class="btn btn-primary" onclick="goHome()">
+                <i class="fas fa-home"></i> Acas?
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-gamepad"></i> Controale Navigare</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-outline-secondary btn-lg w-100 mb-2" onclick="goBack()">
+                                <i class="fas fa-arrow-left"></i> Înapoi
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-outline-secondary btn-lg w-100 mb-2" onclick="goForward()">
+                                Înainte <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-outline-primary btn-lg w-100 mb-2" onclick="refreshPage()">
+                                <i class="fas fa-sync-alt"></i> Reîncarc?
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-outline-success btn-lg w-100 mb-2" onclick="goHome()">
+                                <i class="fas fa-home"></i> Acas?
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="fas fa-keyboard"></i> <strong>Scurt?turi tastatur?:</strong>
+                                Alt+? (Înapoi) | Alt+? (Înainte) | Alt+H (Acas?) | Alt+C (Clien?i) | Alt+A (Program?ri) | Alt+N (Notific?ri)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-heartbeat"></i> Status Sistem</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card border-success mb-3">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-check-circle text-success fa-3x mb-2"></i>
+                                    <h6 class="card-title">Navigare</h6>
+                                    <span class="badge bg-success">Func?ional?</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-info mb-3">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-database text-info fa-3x mb-2"></i>
+                                    <h6 class="card-title">Baza de Date</h6>
+                                    <span class="badge bg-info">Conectat?</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-warning mb-3">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-envelope text-warning fa-3x mb-2"></i>
+                                    <h6 class="card-title">Serviciu Email</h6>
+                                    <span class="badge bg-warning">Test Necesar</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card border-primary mb-3">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-sms text-primary fa-3x mb-2"></i>
+                                    <h6 class="card-title">Serviciu SMS</h6>
+                                    <span class="badge bg-primary">Test Necesar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu Tests -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-link"></i> Test Leg?turi Meniuri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary"><i class="fas fa-list"></i> Meniuri Principale</h6>
+                            <div class="list-group mb-3">
+                                <a href="@Url.Action("Index", "Home")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-home text-primary"></i> Pagina Principal?
+                                    <span class="badge bg-primary rounded-pill float-end">Test</span>
+                                </a>
+                                <a href="@Url.Action("Index", "Clients")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-users text-success"></i> Lista Clien?i
+                                    <span class="badge bg-success rounded-pill float-end">Test</span>
+                                </a>
+                                <a href="@Url.Action("Create", "Clients")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-user-plus text-success"></i> Client Nou
+                                    <span class="badge bg-success rounded-pill float-end">Test</span>
+                                </a>
+                                <a href="@Url.Action("Index", "Appointments")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-calendar-alt text-info"></i> Lista Program?ri
+                                    <span class="badge bg-info rounded-pill float-end">Test</span>
+                                </a>
+                                <a href="@Url.Action("Create", "Appointments")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-calendar-plus text-info"></i> Programare Nou?
+                                    <span class="badge bg-info rounded-pill float-end">Test</span>
+                                </a>
+                                <a href="@Url.Action("Calendar", "Appointments")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-calendar text-info"></i> Calendar
+                                    <span class="badge bg-info rounded-pill float-end">Test</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-warning"><i class="fas fa-cog"></i> Notific?ri & Admin</h6>
+                            <div class="list-group mb-3">
+                                <a href="@Url.Action("Index", "Notifications")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-bell text-warning"></i> Lista Notific?ri
+                                    <span class="badge bg-warning rounded-pill float-end">Test</span>
+                                </a>
+                                <a href="@Url.Action("Dashboard", "Notifications")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-tachometer-alt text-warning"></i> Dashboard Notific?ri
+                                    <span class="badge bg-warning rounded-pill float-end">Test</span>
+                                </a>
+                                <a href="@Url.Action("Dashboard", "Admin")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-cogs text-danger"></i> Dashboard Admin
+                                    <span class="badge bg-danger rounded-pill float-end">Admin</span>
+                                </a>
+                                <a href="@Url.Action("Users", "Admin")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-users-cog text-danger"></i> Gestiune Utilizatori
+                                    <span class="badge bg-danger rounded-pill float-end">Admin</span>
+                                </a>
+                                <a href="@Url.Action("SystemInfo", "Admin")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-info-circle text-danger"></i> Informa?ii Sistem
+                                    <span class="badge bg-danger rounded-pill float-end">Admin</span>
+                                </a>
+                                <a href="@Url.Action("TestEmail", "Test")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-envelope text-secondary"></i> Test Email
+                                    <span class="badge bg-secondary rounded-pill float-end">Test</span>
+                                </a>
+                                <a href="@Url.Action("TestSms", "Test")" class="list-group-item list-group-item-action" onclick="trackNavigation(this)">
+                                    <i class="fas fa-sms text-secondary"></i> Test SMS
+                                    <span class="badge bg-secondary rounded-pill float-end">Test</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Simulation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Simulare Erori</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Testeaz? gestionarea erorilor ?i op?iunile de navigare:
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-warning w-100 mb-2" onclick="simulateError('404')">
+                                <i class="fas fa-search"></i> Simuleaz? Error 404
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-danger w-100 mb-2" onclick="simulateError('500')">
+                                <i class="fas fa-server"></i> Simuleaz? Error 500
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-success w-100 mb-2" onclick="clearErrors()">
+                                <i class="fas fa-trash"></i> ?terge Erori
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="errorDisplay" class="alert alert-dismissible mt-3" style="display: none;">
+                        <button type="button" class="btn-close" onclick="clearErrors()"></button>
+                        <div id="errorContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Log -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-secondary">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history"></i> Jurnal Navigare
+                        <button type="button" class="btn btn-sm btn-outline-light float-end" onclick="clearLog()">
+                            <i class="fas fa-trash"></i> ?terge
+                        </button>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="navigationLog" class="bg-light p-3 rounded" style="height: 200px; overflow-y: auto;">
+                        <p class="text-muted mb-0">Jurnalul de navigare va ap?rea aici...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .list-group-item {
+        transition: all 0.2s ease;
+    }
+    
+    .list-group-item:hover {
+        transform: translateX(5px);
+        background-color: #f8f9fa;
+        border-left: 4px solid #0d6efd;
+    }
+    
+    .card {
+        transition: transform 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .btn {
+        transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    #navigationLog {
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+    }
+    
+    .log-entry {
+        padding: 2px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .log-entry:last-child {
+        border-bottom: none;
+    }
+    
+    .log-time {
+        color: #6c757d;
+        font-weight: bold;
+    }
+    
+    .log-action {
+        color: #0d6efd;
+    }
+</style>
+
+<script>
+    let navigationHistory = [];
+    
+    // Navigation functions
+    function goBack() {
+        logNavigation('Navigare înapoi', 'history.back()');
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = '@Url.Action("Index", "Home")';
+        }
+    }
+    
+    function goForward() {
+        logNavigation('Navigare înainte', 'history.forward()');
+        window.history.forward();
+    }
+    
+    function refreshPage() {
+        logNavigation('Reînc?rcare pagin?', 'location.reload()');
+        window.location.reload();
+    }
+    
+    function goHome() {
+        logNavigation('Navigare acas?', '/');
+        window.location.href = '@Url.Action("Index", "Home")';
+    }
+    
+    // Error simulation
+    function simulateError(type) {
+        const errorDisplay = document.getElementById('errorDisplay');
+        const errorContent = document.getElementById('errorContent');
+        
+        let errorMessage = '';
+        let alertClass = 'alert-danger';
+        
+        switch(type) {
+            case '404':
+                errorMessage = `
+                    <h5><i class="fas fa-exclamation-triangle"></i> Error 404 - Pagina nu a fost g?sit?</h5>
+                    <p><strong>Simulare:</strong> Pagina solicitat? nu exist? în sistem.</p>
+                    <p><strong>URL:</strong> /NonexistentPage</p>
+                    <div class="mt-3">
+                        <button class="btn btn-primary btn-sm me-2" onclick="goBack()">
+                            <i class="fas fa-arrow-left"></i> Înapoi
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="goHome()">
+                            <i class="fas fa-home"></i> Acas?
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="refreshPage()">
+                            <i class="fas fa-sync-alt"></i> Reîncarc?
+                        </button>
+                    </div>
+                `;
+                alertClass = 'alert-warning';
+                logNavigation('Simulare Error 404', 'Error simulation');
+                break;
+                
+            case '500':
+                errorMessage = `
+                    <h5><i class="fas fa-times-circle"></i> Error 500 - Eroare Server Intern</h5>
+                    <p><strong>Simulare:</strong> A ap?rut o problem? pe server.</p>
+                    <p><strong>Detalii:</strong> Internal server error - simulation mode</p>
+                    <div class="mt-3">
+                        <button class="btn btn-primary btn-sm me-2" onclick="goBack()">
+                            <i class="fas fa-arrow-left"></i> Înapoi
+                        </button>
+                        <button class="btn btn-success btn-sm me-2" onclick="refreshPage()">
+                            <i class="fas fa-sync-alt"></i> Reîncarc?
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="goHome()">
+                            <i class="fas fa-home"></i> Acas?
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="window.location.href='@Url.Action("Dashboard", "Admin")'">
+                            <i class="fas fa-cogs"></i> Admin Panel
+                        </button>
+                    </div>
+                `;
+                logNavigation('Simulare Error 500', 'Error simulation');
+                break;
+        }
+        
+        errorDisplay.className = `alert ${alertClass} alert-dismissible`;
+        errorContent.innerHTML = errorMessage;
+        errorDisplay.style.display = 'block';
+        
+        // Scroll to error
+        errorDisplay.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function clearErrors() {
+        document.getElementById('errorDisplay').style.display = 'none';
+        logNavigation('Erori ?terse', 'clearErrors()');
+    }
+    
+    // Navigation tracking
+    function trackNavigation(element) {
+        const href = element.getAttribute('href');
+        const text = element.textContent.trim().replace(/\s+/g, ' ');
+        logNavigation(`Click pe: ${text}`, href);
+    }
+    
+    function logNavigation(action, details) {
+        const timestamp = new Date().toLocaleTimeString('ro-RO');
+        const logEntry = {
+            time: timestamp,
+            action: action,
+            details: details,
+            url: window.location.pathname
+        };
+        
+        navigationHistory.push(logEntry);
+        updateNavigationLog();
+        
+        // Keep only last 50 entries
+        if (navigationHistory.length > 50) {
+            navigationHistory.shift();
+        }
+    }
+    
+    function updateNavigationLog() {
+        const logContainer = document.getElementById('navigationLog');
+        
+        if (navigationHistory.length === 0) {
+            logContainer.innerHTML = '<p class="text-muted mb-0">Jurnalul de navigare va ap?rea aici...</p>';
+            return;
+        }
+        
+        let logHtml = '';
+        navigationHistory.slice(-10).reverse().forEach(entry => {
+            logHtml += `
+                <div class="log-entry">
+                    <span class="log-time">${entry.time}</span> - 
+                    <span class="log-action">${entry.action}</span>
+                    ${entry.details ? `<br><small class="text-muted ms-3">${entry.details}</small>` : ''}
+                </div>
+            `;
+        });
+        
+        logContainer.innerHTML = logHtml;
+        
+        // Auto-scroll to top
+        logContainer.scrollTop = 0;
+    }
+    
+    function clearLog() {
+        navigationHistory = [];
+        updateNavigationLog();
+        logNavigation('Jurnal ?ters', 'clearLog()');
+    }
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.altKey) {
+            let handled = false;
+            switch(e.key) {
+                case 'ArrowLeft':
+                    goBack();
+                    handled = true;
+                    break;
+                case 'ArrowRight':
+                    goForward();
+                    handled = true;
+                    break;
+                case 'h':
+                    goHome();
+                    handled = true;
+                    break;
+                case 'r':
+                    refreshPage();
+                    handled = true;
+                    break;
+                case 'c':
+                    window.location.href = '@Url.Action("Index", "Clients")';
+                    handled = true;
+                    break;
+                case 'a':
+                    window.location.href = '@Url.Action("Index", "Appointments")';
+                    handled = true;
+                    break;
+                case 'n':
+                    window.location.href = '@Url.Action("Index", "Notifications")';
+                    handled = true;
+                    break;
+            }
+            
+            if (handled) {
+                e.preventDefault();
+                logNavigation(`Scurt?tur? tastatur?: Alt+${e.key}`, 'Keyboard shortcut');
+            }
+        }
+    });
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        logNavigation('Pagin? înc?rcat?', window.location.pathname);
+        
+        // Test all navigation links on page load
+        console.log('Pagina de test navigare înc?rcat?. Se testeaz? toate leg?turile...');
+        
+        const links = document.querySelectorAll('.list-group-item[href]');
+        links.forEach(link => {
+            // Test if link is accessible (basic check)
+            const href = link.getAttribute('href');
+            if (href && !href.startsWith('http')) {
+                console.log(`Link g?sit: ${href} - ${link.textContent.trim()}`);
+            }
+        });
+        
+        // Show keyboard shortcuts help after 3 seconds
+        setTimeout(() => {
+            if (navigationHistory.length <= 1) {
+                logNavigation('Ajutor disponibil', 'Folose?te Alt+s?ge?i pentru navigare rapid?');
+            }
+        }, 3000);
+    });
+    
+    // Track page visibility changes
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            logNavigation('Pagin? ascuns?', 'visibilitychange');
+        } else {
+            logNavigation('Pagin? vizibil?', 'visibilitychange');
+        }
+    });
+    
+    // Track back/forward browser navigation
+    window.addEventListener('popstate', function(event) {
+        logNavigation('Navigare browser', 'popstate event');
+    });
+</script>
