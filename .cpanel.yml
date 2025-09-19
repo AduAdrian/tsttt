@@ -1,0 +1,50 @@
+---
+# cPanel Git Deployment Configuration for NotificariClienti
+# This file enables automatic deployment from Git repository to cPanel hosting
+
+deployment:
+  tasks:
+    # Create necessary directories
+    - mkdir -p $DEPLOYPATH/logs
+    - mkdir -p $DEPLOYPATH/../app_data
+    
+    # Check if .NET is available, if not use manual deployment
+    - |
+      if command -v dotnet &> /dev/null; then
+        echo "Building with .NET CLI..."
+        cd WebApplication1
+        dotnet restore
+        dotnet publish -c Release -o $DEPLOYPATH --self-contained false --runtime linux-x64
+      else
+        echo "Manual deployment - copying pre-built files..."
+        # Copy all application files to deployment path
+        cp -r WebApplication1/* $DEPLOYPATH/
+        cp -r WebApplication1/bin/Release/net8.0/publish/* $DEPLOYPATH/ 2>/dev/null || true
+      fi
+    
+    # Copy configuration and database files
+    - cp WebApplication1/web.config $DEPLOYPATH/ 2>/dev/null || true
+    - cp WebApplication1/app.db $DEPLOYPATH/../app_data/ 2>/dev/null || true
+    - cp WebApplication1/appsettings.Production.json $DEPLOYPATH/ 2>/dev/null || true
+    
+    # Copy static content
+    - cp -r WebApplication1/wwwroot/* $DEPLOYPATH/ 2>/dev/null || true
+    - cp -r WebApplication1/Views $DEPLOYPATH/ 2>/dev/null || true
+    
+    # Set proper permissions for cPanel
+    - find $DEPLOYPATH -type f -exec chmod 644 {} \; 2>/dev/null || true
+    - find $DEPLOYPATH -type d -exec chmod 755 {} \; 2>/dev/null || true
+    
+    # Create .htaccess for better compatibility
+    - |
+      cat > $DEPLOYPATH/.htaccess << 'EOF'
+      RewriteEngine On
+      RewriteCond %{REQUEST_FILENAME} !-f
+      RewriteCond %{REQUEST_FILENAME} !-d
+      RewriteRule ^(.*)$ index.html [QSA,L]
+      
+      # Security
+      Header always set X-Content-Type-Options nosniff
+      Header always set X-Frame-Options DENY
+      Header always set X-XSS-Protection "1; mode=block"
+      EOF
