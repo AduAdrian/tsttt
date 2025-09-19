@@ -1,0 +1,30 @@
+{
+  "routes": [
+    {
+      "route": "/*",
+      "rewrite": "/index.html"
+    }
+  ],
+  "responseOverrides": {
+    "400": {
+      "rewrite": "/index.html"
+    },
+    "401": {
+      "rewrite": "/index.html"
+    },
+    "403": {
+      "rewrite": "/index.html"
+    },
+    "404": {
+      "rewrite": "/index.html"
+    }
+  },
+  "globalHeaders": {
+    "content-security-policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; img-src 'self' data: blob:; font-src 'self' data:;"
+  },
+  "mimeTypes": {
+    ".html": "text/html",
+    ".js": "text/javascript",
+    ".css": "text/css"
+  }
+}
