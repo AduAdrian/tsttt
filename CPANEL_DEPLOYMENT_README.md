@@ -1,35 +1,52 @@
-# Manual Deployment Instructions for cPanel
-# Use this if automatic Git deployment doesn't work
+# cPanel Git Deployment Guide for NotificariClienti
 
-## Option 1: Use the PowerShell Scripts (Recommended)
-1. Run locally: `.\deploy-all.ps1`
-2. Compress the `cpanel-deploy` folder to ZIP
-3. Upload ZIP to cPanel File Manager
-4. Extract and follow instructions
+## 🚀 How to Deploy from Git in cPanel
 
-## Option 2: Direct Git Deployment Setup
-If cPanel supports Git deployment:
+### Method 1: Automatic Deployment (Push Deployment)
+When you push changes to the Git repository, cPanel automatically deploys them:
 
-### Step 1: Enable Git Deployment in cPanel
-1. Go to cPanel → Git™ Version Control
-2. Create repository or connect existing one
-3. Set Repository Path: `/home/yourusername/repositories/tsttt`
-4. Set Deployment Path: `/home/yourusername/public_html`
+1. **Make changes locally** and commit them
+2. **Push to repository**: `git push origin master`
+3. **cPanel auto-deploys** using the `.cpanel.yml` configuration file
+
+### Method 2: Manual Deployment (Pull Deployment) 
+Use cPanel interface to manually trigger deployment:
+
+1. **cPanel → Git™ Version Control**
+2. Click **"Update from Remote"** to pull latest changes
+3. Click **"Deploy HEAD Commit"** to deploy to production
+
+## 📋 What the .cpanel.yml File Does
+
+The `.cpanel.yml` file automatically:
+
+✅ **Copies application files** to `/public_html/`  
+✅ **Moves database** to `/app_data/` (secure location)  
+✅ **Creates log directory** at `/logs/`  
+✅ **Sets proper permissions** (644 for files, 755 for directories)  
+✅ **Creates .htaccess** with security headers and URL rewriting  
+✅ **Copies static content** from wwwroot to public_html root  
+
+## 🔧 cPanel Setup Requirements
+
+### Step 1: Enable Git in cPanel
+1. **cPanel → Git™ Version Control**
+2. **Create Repository** or **Clone existing**:
+   - Repository URL: `https://github.com/AduAdrian/tsttt.git`
+   - Repository Path: `/home/yourusername/repositories/tsttt`
+   - Branch: `master`
 
 ### Step 2: Configure Environment Variables
-In cPanel → Environment Variables, add:
-```
+**cPanel → Environment Variables**, add:
+```bash
 ASPNETCORE_ENVIRONMENT=Production
 ASPNETCORE_URLS=http://*:80
 ConnectionStrings__DefaultConnection=Data Source=/home/yourusername/app_data/app.db
 ```
 
-### Step 3: Deploy
-1. Click "Update from Remote" in cPanel Git interface
-2. Or use "Deploy HEAD Commit" button
-
-### Step 4: Manual Steps After Git Deploy
-After each deployment, you may need to:
+### Step 3: Verify .NET Support
+- Contact hosting provider to confirm **ASP.NET Core 8.0** support
+- Some hosts may need manual .NET runtime installation
 
 1. **Move database file**:
    ```bash

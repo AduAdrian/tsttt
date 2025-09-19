@@ -1,50 +1,53 @@
 ---
-# cPanel Git Deployment Configuration for NotificariClienti
-# This file enables automatic deployment from Git repository to cPanel hosting
-
 deployment:
   tasks:
-    # Create necessary directories
-    - mkdir -p $DEPLOYPATH/logs
-    - mkdir -p $DEPLOYPATH/../app_data
+    # Set deployment path to public_html
+    - export DEPLOYPATH=/home/$USER/public_html/
     
-    # Check if .NET is available, if not use manual deployment
-    - |
-      if command -v dotnet &> /dev/null; then
-        echo "Building with .NET CLI..."
-        cd WebApplication1
-        dotnet restore
-        dotnet publish -c Release -o $DEPLOYPATH --self-contained false --runtime linux-x64
-      else
-        echo "Manual deployment - copying pre-built files..."
-        # Copy all application files to deployment path
-        cp -r WebApplication1/* $DEPLOYPATH/
-        cp -r WebApplication1/bin/Release/net8.0/publish/* $DEPLOYPATH/ 2>/dev/null || true
-      fi
+    # Create necessary directories outside public_html
+    - /bin/mkdir -p /home/$USER/app_data
+    - /bin/mkdir -p /home/$USER/logs
     
-    # Copy configuration and database files
-    - cp WebApplication1/web.config $DEPLOYPATH/ 2>/dev/null || true
-    - cp WebApplication1/app.db $DEPLOYPATH/../app_data/ 2>/dev/null || true
-    - cp WebApplication1/appsettings.Production.json $DEPLOYPATH/ 2>/dev/null || true
+    # Copy main application files to public_html
+    - /bin/cp -R WebApplication1/* $DEPLOYPATH
     
-    # Copy static content
-    - cp -r WebApplication1/wwwroot/* $DEPLOYPATH/ 2>/dev/null || true
-    - cp -r WebApplication1/Views $DEPLOYPATH/ 2>/dev/null || true
+    # Copy database to app_data (outside public_html for security)
+    - /bin/cp WebApplication1/app.db /home/$USER/app_data/ 2>/dev/null || true
     
-    # Set proper permissions for cPanel
-    - find $DEPLOYPATH -type f -exec chmod 644 {} \; 2>/dev/null || true
-    - find $DEPLOYPATH -type d -exec chmod 755 {} \; 2>/dev/null || true
+    # Copy configuration files
+    - /bin/cp WebApplication1/web.config $DEPLOYPATH 2>/dev/null || true
+    - /bin/cp WebApplication1/appsettings.Production.json $DEPLOYPATH 2>/dev/null || true
     
-    # Create .htaccess for better compatibility
-    - |
-      cat > $DEPLOYPATH/.htaccess << 'EOF'
-      RewriteEngine On
-      RewriteCond %{REQUEST_FILENAME} !-f
-      RewriteCond %{REQUEST_FILENAME} !-d
-      RewriteRule ^(.*)$ index.html [QSA,L]
-      
-      # Security
-      Header always set X-Content-Type-Options nosniff
-      Header always set X-Frame-Options DENY
-      Header always set X-XSS-Protection "1; mode=block"
-      EOF
+    # Copy static content from wwwroot to root of public_html
+    - /bin/cp -R WebApplication1/wwwroot/* $DEPLOYPATH 2>/dev/null || true
+    
+    # Set proper file permissions
+    - /bin/find $DEPLOYPATH -type f -exec chmod 644 {} \; 2>/dev/null || true
+    - /bin/find $DEPLOYPATH -type d -exec chmod 755 {} \; 2>/dev/null || true
+    
+    # Create .htaccess for URL rewriting and security
+    - /bin/cat > $DEPLOYPATH/.htaccess << 'HTACCESS_END'
+RewriteEngine On
+
+# Handle ASP.NET Core routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.html [QSA,L]
+
+# Security headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+
+# Hide sensitive directories
+RedirectMatch 403 ^/bin/.*$
+RedirectMatch 403 ^/App_Data/.*$
+RedirectMatch 403 ^/logs/.*$
+
+# Cache static files
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+    ExpiresActive On
+    ExpiresDefault "access plus 30 days"
+    Header set Cache-Control "public, max-age=2592000"
+</FilesMatch>
+HTACCESS_END
